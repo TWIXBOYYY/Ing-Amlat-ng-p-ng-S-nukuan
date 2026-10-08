@@ -13,8 +13,8 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/<your-repo-name>.git
-cd <your-repo-name>
+git clone https://github.com/TWIXBOYYY/Ing-Amlat-ng-p-ng-S-nukuan.git
+cd Ing-Amlat-ng-p-ng-S-nukuan
 
 # 2. Install dependencies
 npm install
