@@ -1,0 +1,280 @@
+.screen-reader {
+  background: #111;
+}
+
+/* ── Comic page layers ── */
+.reader-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Each page slot */
+.reader-page {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.reader-page.is-current {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.reader-page-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  user-select: none;
+}
+
+/* Placeholder (used while real art loads / as fallback) */
+.reader-page-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%);
+  color: rgba(255,255,255,0.6);
+}
+
+.reader-placeholder-num {
+  font-family: var(--font-heading);
+  font-size: clamp(80px, 15vmin, 160px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  opacity: 0.08;
+  line-height: 1;
+}
+
+.reader-placeholder-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-ui);
+  letter-spacing: 0.18em;
+  opacity: 0.5;
+  text-transform: uppercase;
+}
+
+/* ── Parallax layer (for pages with layers array) ── */
+.reader-parallax-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* ── HUD — top bar ── */
+.reader-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.reader-hud-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: clamp(72px, 11vmin, 104px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(16px, 3vw, 36px);
+  background: linear-gradient(180deg, rgba(0,0,0,0.68) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+
+.reader-hud-top.show,
+.reader-hud:hover .reader-hud-top {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.reader-hud-left,
+.reader-hud-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.8vmin, 10px);
+  pointer-events: all;
+}
+
+/* ── PNG-based HUD buttons (shared base) ── */
+.reader-hud-img-btn {
+  --btn-h: clamp(54px, 9vmin, 86px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  height: var(--btn-h);
+  width: var(--btn-h);          /* square frame for icon buttons */
+  flex-shrink: 0;
+  transition: transform 0.15s, filter 0.15s;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
+}
+
+.reader-hud-img-btn:hover,
+.reader-hud-img-btn:focus-visible {
+  transform: scale(1.08);
+  filter: drop-shadow(0 3px 12px rgba(0,0,0,0.7)) brightness(1.12);
+  outline: none;
+}
+
+.reader-hud-img-btn:active {
+  transform: scale(0.95);
+  filter: brightness(0.85);
+}
+
+.reader-hud-btn-img {
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Restart — medium frame, wider to fit text */
+.reader-hud-restart-btn {
+  background: url('/assets/ui/MEDIUM LENGTH.png') center/100% 100% no-repeat;
+  width: clamp(120px, 17vmin, 200px);
+}
+
+.reader-restart-label {
+  font-family: var(--font-heading);
+  font-size: clamp(11px, 1.7vmin, 17px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.9);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Autoplay active — gold glow so the state is obvious */
+.reader-hud-img-btn.autoplay-active {
+  filter: drop-shadow(0 0 10px rgba(201,162,39,0.9)) brightness(1.2);
+}
+
+.reader-page-indicator {
+  font-family: var(--font-heading);
+  font-size: var(--fs-ui);
+  letter-spacing: 0.1em;
+  color: white;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+}
+
+/* ── Navigation arrows ── */
+.reader-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.reader-nav.show,
+.reader-hud:hover .reader-nav {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.reader-nav-prev { left: clamp(4px, 1vw, 16px); }
+.reader-nav-next { right: clamp(4px, 1vw, 16px); }
+
+.reader-nav-btn {
+  width: clamp(64px, 9vmin, 120px);
+  height: clamp(64px, 9vmin, 120px);
+  background: none;
+  border: none;
+  padding: 0;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.55));
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.reader-nav-btn:hover,
+.reader-nav-btn:focus-visible {
+  transform: scale(1.08);
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.7)) brightness(1.15);
+  outline: none;
+}
+
+.reader-nav-btn:disabled {
+  opacity: 0.25;
+}
+
+/* ── Bottom progress bar ── */
+.reader-progress {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 clamp(20px, 4vw, 64px) clamp(8px, 1.5vmin, 20px);
+  background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.reader-progress.show,
+.reader-hud:hover .reader-progress {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Track width controls the bar's visual size (aspect ratio does the rest).
+   PNG is ~12.5:1 wide-to-tall, so 900px wide ≈ 72px tall — a comfortable medium. */
+.reader-progress-track {
+  width: clamp(500px, 62vw, 920px);
+  flex: none;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Frame image — natural aspect ratio preserved, sits on top (z-index 2) */
+.reader-progress-frame {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Fill — behind the frame (z-index 1), visible through the transparent slot.
+   Slot coordinates (tweak if needed):
+     top    45%  — top edge of the hollow groove
+     bottom 38%  — bottom edge of the hollow groove
+     left    7%  — left edge of the slot (after the end-cap)
+   Max-width 85% keeps the fill inside the slot before the right end-cap. */
+.reader-progress-fill {
+  position: absolute;
+  top: 45%;
+  bottom: 38%;
+  left: 7%;
+  width: calc(var(--progress, 0%) * 0.85);
+  max-width: 85%;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+

@@ -1,0 +1,131 @@
+.screen-home {
+  background: url('/assets/ui/Mt.Alaya.png') center/cover no-repeat #1e2530;
+  overflow: hidden;
+}
+
+/* ── Parallax layer base ── */
+.home-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+/* Sky gradient — hidden now that Mt.Alaya.png is the background */
+.home-sky { display: none; }
+
+/* Cloud layers */
+.home-clouds-left,
+.home-clouds-right {
+  position: absolute;
+  top: 0;
+  width: 45%;
+  height: 55%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  will-change: transform;
+}
+
+.home-clouds-left {
+  left: 0;
+  background: radial-gradient(ellipse 80% 60% at 20% 40%,
+    rgba(200,210,220,0.5) 0%, transparent 70%);
+}
+
+.home-clouds-right {
+  right: 0;
+  background: radial-gradient(ellipse 80% 60% at 80% 35%,
+    rgba(200,210,220,0.45) 0%, transparent 70%);
+}
+
+/* Placeholder mountains and ground — hidden now that Mt.Alaya.png is the background */
+.home-mountain-bg,
+.home-mountain-mid-l,
+.home-mountain-mid-r,
+.home-ground { display: none; }
+
+/* ── Menu ── */
+.home-menu {
+  position: absolute;
+  bottom: 24%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2px, 0.5vmin, 8px);
+  opacity: 0;
+}
+
+.home-menu-btn {
+  font-family: var(--font-menu);
+  font-size: var(--fs-menu);
+  font-weight: 400;
+  color: var(--color-white);
+  letter-spacing: 0.07em;
+  padding: 10px 32px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.75);
+  transition: color 0.22s, text-shadow 0.22s;
+  border-radius: 6px;
+}
+
+.home-menu-btn:hover,
+.home-menu-btn:focus-visible {
+  color: var(--color-gold-light);
+  text-shadow: 0 0 32px rgba(232,200,74,0.65), 0 2px 20px rgba(0,0,0,0.75);
+  outline: none;
+}
+
+/* ── HUD buttons ── */
+.home-settings-btn {
+  --btn-h: clamp(54px, 9vmin, 86px);
+  position: absolute;
+  top: clamp(16px, 2.5vmin, 28px);
+  right: clamp(16px, 2.5vmin, 36px);
+  width: var(--btn-h);
+  height: var(--btn-h);
+  background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.home-settings-btn:hover,
+.home-settings-btn:focus-visible {
+  transform: scale(1.08);
+  filter: drop-shadow(0 3px 12px rgba(0,0,0,0.7)) brightness(1.12);
+  outline: none;
+}
+
+.home-settings-btn:active {
+  transform: scale(0.95);
+  filter: brightness(0.85);
+}
+
+.home-settings-btn-img {
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Continue button — hidden until a saved page exists */
+.home-continue-btn {
+  display: none;
+}
+
+/* ── Portrait adjustments ── */
+@media (orientation: portrait) {
+  .home-menu {
+    bottom: 18%;
+  }
+}
