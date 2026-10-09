@@ -126,6 +126,20 @@
 /* ── Portrait adjustments ── */
 @media (orientation: portrait) {
   .home-menu {
-    bottom: 18%;
+    bottom: 16%;
+  }
+
+  .home-settings-btn {
+    --btn-h: clamp(44px, 8vmin, 72px);
+    top: clamp(12px, 2vmin, 24px);
+    right: clamp(12px, 2vmin, 24px);
+  }
+}
+
+/* ── Small portrait phones (≤420px) ── */
+@media (max-width: 420px) and (orientation: portrait) {
+  .home-menu-btn {
+    font-size: clamp(1.25rem, 6vw, 2rem);
+    padding: 8px 24px;
   }
 }

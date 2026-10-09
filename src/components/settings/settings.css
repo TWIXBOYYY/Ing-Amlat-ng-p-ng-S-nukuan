@@ -192,22 +192,22 @@
   transition: opacity 0.2s;
 }
 
-/* ── Narrow screen ── */
-@media (max-width: 600px), (orientation: portrait) and (max-width: 500px) {
+/* ── Narrow screen (portrait phones + small landscape) ── */
+@media (max-width: 700px), (orientation: portrait) {
   .settings-panel {
     width: 92vw;
     top: clamp(60px, 9vmin, 80px);
     right: 4vw;
     max-height: calc(100% - clamp(60px, 9vmin, 80px) - 16px);
+    padding: clamp(20px, 3vmin, 40px) clamp(24px, 4vw, 64px) clamp(40px, 6vmin, 80px);
   }
 
   .settings-row-label {
-    width: 100%;
-    flex-shrink: unset;
-    margin-bottom: 4px;
+    font-size: clamp(10px, 1.8vmin, 15px);
+    width: clamp(90px, 30vw, 140px);
   }
 
-  .settings-row {
-    flex-wrap: wrap;
+  .settings-pct {
+    width: clamp(28px, 8vw, 48px);
   }
 }

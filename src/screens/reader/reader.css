@@ -238,10 +238,10 @@
   pointer-events: all;
 }
 
-/* Track width controls the bar's visual size (aspect ratio does the rest).
-   PNG is ~12.5:1 wide-to-tall, so 900px wide ≈ 72px tall — a comfortable medium. */
+/* Track width: min(88vw, 500px) keeps the bar on-screen on narrow portrait phones
+   while preserving the 500px floor on anything wider than ~568px. */
 .reader-progress-track {
-  width: clamp(500px, 62vw, 920px);
+  width: clamp(min(88vw, 500px), 62vw, 920px);
   flex: none;
   margin: 0 auto;
   position: relative;
@@ -278,3 +278,36 @@
   z-index: 1;
 }
 
+/* ── Portrait / narrow-screen adjustments ── */
+@media (orientation: portrait), (max-width: 520px) {
+  .reader-hud-img-btn {
+    --btn-h: clamp(44px, 8vmin, 72px);
+  }
+
+  .reader-hud-restart-btn {
+    width: clamp(90px, 13vmin, 160px);
+  }
+
+  .reader-restart-label {
+    font-size: clamp(9px, 1.4vmin, 14px);
+  }
+
+  .reader-nav-btn {
+    width: clamp(52px, 8vmin, 100px);
+    height: clamp(52px, 8vmin, 100px);
+  }
+
+  .reader-hud-top {
+    height: clamp(64px, 10vmin, 96px);
+    padding: 0 clamp(8px, 2vw, 20px);
+  }
+
+  .reader-hud-left,
+  .reader-hud-right {
+    gap: clamp(2px, 0.5vmin, 8px);
+  }
+
+  .reader-progress {
+    padding: 0 clamp(10px, 2vw, 40px) clamp(6px, 1vmin, 16px);
+  }
+}

@@ -62,9 +62,14 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    padding: clamp(56px, 8vmin, 80px) clamp(80px, 12vw, 120px) clamp(24px, 4vmin, 48px);
+    /* top: clear the absolute-positioned back button (bottom edge ≈ 70px on phones) */
+    padding: clamp(80px, 14vmin, 110px) clamp(20px, 5vw, 60px) clamp(24px, 4vmin, 48px);
     gap: clamp(16px, 3vmin, 32px);
     overflow-y: auto;
+  }
+
+  .about-body {
+    text-align: left; /* justify creates ugly gaps on narrow screens */
   }
 
   .about-image-wrap {
