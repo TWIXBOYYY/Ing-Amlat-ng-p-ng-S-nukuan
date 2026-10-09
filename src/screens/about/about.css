@@ -74,7 +74,13 @@
 
   .about-image-wrap {
     width: 100%;
-    height: clamp(160px, 35vw, 300px);
+    height: auto; /* let the image define its own height so nothing gets cropped */
+  }
+
+  .about-image {
+    height: auto;
+    object-fit: contain;
+    max-height: 60vw; /* prevent it from being too tall on wide tablets */
   }
 }
 
