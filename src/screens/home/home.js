@@ -44,8 +44,10 @@ export function mountHome(el) {
   const settingsBtn = el.querySelector('.home-settings-btn');
 
   // Animate in every visit
+  const menu    = el.querySelector('.home-menu');
   const menuBtns = el.querySelectorAll('.home-menu-btn');
-  gsap.set(menuBtns,   { opacity: 0, y: 22 });
+  gsap.set(menu,        { opacity: 1 }); // container must be visible; buttons handle their own fade
+  gsap.set(menuBtns,    { opacity: 0, y: 22 });
   gsap.set(settingsBtn, { opacity: 0, y: -20 });
 
   gsap.to(menuBtns, {
