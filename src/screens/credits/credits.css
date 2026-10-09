@@ -85,6 +85,10 @@
   .screen-credits {
     justify-content: flex-start;
     overflow-y: auto;
+    /* clear the absolute-positioned back button (bottom edge ≈ 70px on phones) */
+    padding-top: clamp(80px, 14vmin, 110px);
+    padding-left: clamp(16px, 5vw, 60px);
+    padding-right: clamp(16px, 5vw, 60px);
   }
 }
 
