@@ -77,7 +77,11 @@ export function createReaderScreen() {
         <div class="reader-hud-right">
           <!-- Settings -->
           <button class="reader-hud-img-btn" id="reader-settings-btn" aria-label="Open audio settings">
-            <img src="/assets/ui/Settings icon.png" class="reader-hud-btn-img" alt="" aria-hidden="true" draggable="false"/>
+            <span class="reader-hud-btn-img" aria-hidden="true">
+              <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+              <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+              <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+            </span>
           </button>
         </div>
       </div>
@@ -149,7 +153,14 @@ export function mountReader(el) {
 
     // Navigation: buttons
     prevBtn.addEventListener('click', () => goTo(currentIndex - 1, 'prev', el));
-    nextBtn.addEventListener('click', () => goTo(currentIndex + 1, 'next', el));
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex >= pages.length - 1) {
+        stopAutoplay(el);
+        navigate('#minigame');
+      } else {
+        goTo(currentIndex + 1, 'next', el);
+      }
+    });
 
     // Navigation: keyboard (only fires when reader is the active screen)
     document.addEventListener('keydown', e => {
@@ -312,8 +323,8 @@ function updateUI({ prevBtn, nextBtn, progFill }) {
   const n   = pages.length;
   const pct = (n > 1) ? (i / (n - 1)) * 100 : 100;
 
-  if (prevBtn)  prevBtn.disabled = i === 0;
-  if (nextBtn)  nextBtn.disabled = i === n - 1;
+  if (prevBtn) prevBtn.disabled = i === 0;
+  if (nextBtn) nextBtn.disabled = false; // last page leads to minigame, never disabled
   if (progFill) progFill.style.setProperty('--progress', `${pct}%`);
 
   try { localStorage.setItem(STORAGE_KEY, String(i)); } catch { /* ignore */ }

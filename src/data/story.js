@@ -100,6 +100,61 @@ export const pages = [
       { src: '/assets/audio/sfx/thunder-low.mp3', on: 'enter' },
     ],
   },
+  {
+    id: 'page-06',
+    image: '/assets/comic/page-06.webp',
+    alt: 'Page 6 — art coming soon.',
+  },
+  {
+    id: 'page-07',
+    image: '/assets/comic/page-07.webp',
+    alt: 'Page 7 — art coming soon.',
+  },
+  {
+    id: 'page-08',
+    image: '/assets/comic/page-08.webp',
+    alt: 'Page 8 — art coming soon.',
+  },
+  {
+    id: 'page-09',
+    image: '/assets/comic/page-09.webp',
+    alt: 'Page 9 — art coming soon.',
+  },
+  {
+    id: 'page-10',
+    image: '/assets/comic/page-10.webp',
+    alt: 'Page 10 — art coming soon.',
+  },
+  {
+    id: 'page-11',
+    image: '/assets/comic/page-11.webp',
+    alt: 'Page 11 — art coming soon.',
+  },
+  {
+    id: 'page-12',
+    image: '/assets/comic/page-12.webp',
+    alt: 'Page 12 — art coming soon.',
+  },
+  {
+    id: 'page-13',
+    image: '/assets/comic/page-13.webp',
+    alt: 'Page 13 — art coming soon.',
+  },
+  {
+    id: 'page-14',
+    image: '/assets/comic/page-14.webp',
+    alt: 'Page 14 — art coming soon.',
+  },
+  {
+    id: 'page-15',
+    image: '/assets/comic/page-15.webp',
+    alt: 'Page 15 — art coming soon.',
+  },
+  {
+    id: 'page-16',
+    image: '/assets/comic/page-16.webp',
+    alt: 'Page 16 — art coming soon.',
+  },
 ];
 
 export const totalPages = pages.length;

@@ -62,7 +62,8 @@ button {
 .screen-loading.active,
 .screen-about.active,
 .screen-credits.active,
-.screen-characters.active {
+.screen-characters.active,
+.screen-minigame.active {
   display: flex;
 }
 
