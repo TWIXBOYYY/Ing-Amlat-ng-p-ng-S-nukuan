@@ -67,7 +67,7 @@ export function createReaderScreen() {
           </button>
           <!-- Restart -->
           <button class="reader-hud-img-btn reader-hud-restart-btn" id="reader-restart-btn" aria-label="Restart from page 1">
-            <img src="/assets/ui/Restart.png" class="reader-hud-btn-img" alt="" aria-hidden="true" draggable="false"/>
+            <span class="reader-restart-label">Restart</span>
           </button>
           <!-- Autoplay -->
           <button class="reader-hud-img-btn" id="reader-autoplay-btn" aria-label="Toggle autoplay" aria-pressed="false">

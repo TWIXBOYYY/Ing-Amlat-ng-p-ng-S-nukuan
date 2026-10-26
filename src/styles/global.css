@@ -61,7 +61,8 @@ button {
 .screen-splash.active,
 .screen-loading.active,
 .screen-about.active,
-.screen-credits.active {
+.screen-credits.active,
+.screen-characters.active {
   display: flex;
 }
 

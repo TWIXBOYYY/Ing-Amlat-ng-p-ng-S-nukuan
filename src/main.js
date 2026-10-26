@@ -8,6 +8,7 @@ import './screens/home/home.css';
 import './screens/about/about.css';
 import './screens/credits/credits.css';
 import './screens/reader/reader.css';
+import './screens/characters/characters.css';
 import './components/settings/settings.css';
 
 /* ── Utilities ── */
@@ -24,6 +25,7 @@ import { createHomeScreen,    mountHome, unmountHome }    from './screens/home/h
 import { createAboutScreen,   mountAbout }    from './screens/about/about.js';
 import { createCreditsScreen, mountCredits }  from './screens/credits/credits.js';
 import { createReaderScreen,  mountReader, unmountReader } from './screens/reader/reader.js';
+import { createCharactersScreen, mountCharacters } from './screens/characters/characters.js';
 
 /* ── Settings overlay (lives above all screens) ── */
 import { createSettingsOverlay } from './components/settings/settings.js';
@@ -47,6 +49,7 @@ function bootstrap() {
     createAboutScreen(),
     createCreditsScreen(),
     createReaderScreen(),
+    createCharactersScreen(),
   ];
   screens.forEach(s => app.appendChild(s));
 
@@ -61,6 +64,7 @@ function bootstrap() {
   registerScreen('#about',   { mount: (el) => mountAbout(el)  });
   registerScreen('#credits', { mount: (el) => mountCredits(el) });
   registerScreen('#reader',  { mount: (el) => mountReader(el), unmount: (el) => unmountReader(el) });
+  registerScreen('#characters', { mount: (el) => mountCharacters(el) });
 
   // 6. Always start at splash — ignore any hash left in the URL from a previous session
   history.replaceState(null, '', '#splash');

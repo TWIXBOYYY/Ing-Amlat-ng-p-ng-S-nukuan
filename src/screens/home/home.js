@@ -22,9 +22,10 @@ export function createHomeScreen() {
 
     <!-- Main menu -->
     <nav class="home-menu" role="navigation" aria-label="Main menu">
-      <button class="home-menu-btn" data-action="story"  >Story</button>
-      <button class="home-menu-btn" data-action="about"  >About</button>
-      <button class="home-menu-btn" data-action="credits">Credits</button>
+      <button class="home-menu-btn" data-action="story"     >Story</button>
+      <button class="home-menu-btn" data-action="characters">Characters</button>
+      <button class="home-menu-btn" data-action="about"     >About</button>
+      <button class="home-menu-btn" data-action="credits"   >Credits</button>
     </nav>
 
     <!-- Settings button -->
@@ -66,8 +67,9 @@ export function mountHome(el) {
     AudioManager.unlock();
     navigate('#reader');
   });
-  el.querySelector('[data-action="about"]')  .addEventListener('click', () => navigate('#about'));
-  el.querySelector('[data-action="credits"]').addEventListener('click', () => navigate('#credits'));
+  el.querySelector('[data-action="characters"]').addEventListener('click', () => navigate('#characters'));
+  el.querySelector('[data-action="about"]')     .addEventListener('click', () => navigate('#about'));
+  el.querySelector('[data-action="credits"]')   .addEventListener('click', () => navigate('#credits'));
 
   settingsBtn.addEventListener('click', showSettings);
 

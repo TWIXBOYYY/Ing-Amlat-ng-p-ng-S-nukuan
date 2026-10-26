@@ -147,9 +147,14 @@
   pointer-events: none;
 }
 
-/* Restart — medium frame, wider to fit text */
+/* Settings icon.png is white — make it dark/visible on the parchment frame */
+#reader-settings-btn .reader-hud-btn-img {
+  filter: brightness(0);
+}
+
+/* Restart — uses Restart.png as the full button frame */
 .reader-hud-restart-btn {
-  background: url('/assets/ui/MEDIUM LENGTH.png') center/100% 100% no-repeat;
+  background: url('/assets/ui/Restart.png') center/100% 100% no-repeat;
   width: clamp(120px, 17vmin, 200px);
 }
 
