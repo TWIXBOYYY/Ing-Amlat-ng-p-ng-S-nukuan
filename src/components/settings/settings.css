@@ -20,7 +20,7 @@
   top: clamp(70px, 10vmin, 100px);   /* below the HUD bar */
   right: 0;
   width: min(640px, 72vw);
-  background: url('/assets/ui/LARGE LENGTH.png') center/100% 100% no-repeat;
+  background: url('/assets/ui/for settings.png') center/100% 100% no-repeat;
   padding: clamp(28px, 4vmin, 48px) clamp(52px, 7vw, 96px) clamp(60px, 9vmin, 104px);
   box-shadow: none;
   transform: translateX(110%);

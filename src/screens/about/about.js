@@ -7,20 +7,21 @@ export function createAboutScreen() {
   el.dataset.screen = '#about';
 
   el.innerHTML = `
-    <div class="about-text">
-      <h1 class="about-heading">HELLO!</h1>
-      <p class="about-body">
-        <strong>Áyup Production</strong> is a team composing of four Multimedia arts students
-        under Graphic Design, developing a project entitled "Ing Amlat ng Ápûng Sínukuan,
-        an interactive digital comic retelling Mt. Alaya myths for today's youth".
-        The project combines qualitative research on the Kapampangan myths along with
-        visual storytelling to create an accessible material that is engaging yet
-        culturally rooted.
-      </p>
-    </div>
-
     <div class="about-image-wrap">
       <img class="about-image loaded" src="/assets/ui/awkward dog.jpg" alt="Áyup Production team" />
+    </div>
+
+    <div class="about-text">
+      <img class="about-logo" src="/assets/ui/AYUP_WHITE_LOGO.png" alt="Áyup Productions" draggable="false"/>
+      <p class="about-body">
+        We are a team composing of four Multimedia arts students
+        under Graphic Design, developing a project entitled "Ing Amlat
+        ng Ápûng Sinukuan, an interactive digital comic retelling Mt.
+        Alaya myths for today's youth". The project combines qualitative
+        research on the Kapampangan myths along with visual storytelling
+        to create an accessible material that is engaging yet
+        culturally rooted.
+      </p>
     </div>
 
     <button class="screen-back-btn" aria-label="Go back to home">
