@@ -21,7 +21,7 @@ const CREDITS_DATA = [
     entries: [
       { name: 'Kristia Quismundo', role: 'Scriptwriter'          },
       { name: 'Jedi Directo',      role: 'Research Adviser'      },
-      { name: 'Owen',              role: 'Web Developer'         },
+      { name: 'Owen Tarog',         role: 'Web Developer'         },
       { name: 'Brian Ragaza',      role: 'Technical Adviser'     },
       { name: 'Mike Pangilinan',   role: 'Cultural Consultant'   },
     ],
