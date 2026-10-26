@@ -116,7 +116,7 @@
   display: block;
   pointer-events: none;
   user-select: none;
-  filter: brightness(0); /* Settings icon.png is white — invert to show on the parchment frame */
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95)) drop-shadow(0 0 2px rgba(0,0,0,0.9));
 }
 
 /* Continue button — hidden until a saved page exists */
