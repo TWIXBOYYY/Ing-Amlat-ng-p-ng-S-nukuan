@@ -11,7 +11,7 @@ export function createLoadingScreen() {
     <p class="loading-label" role="status" aria-live="polite" aria-atomic="true">LOADING...</p>
     <div class="loading-orb-wrap" aria-hidden="true">
       <div class="loading-orb-glow"></div>
-      <img src="/assets/ui/image 5.png" class="loading-orb-img" alt="" draggable="false"/>
+      <img src="/assets/ui/SUN (for loading).png" class="loading-orb-img" alt="" draggable="false"/>
     </div>
     <div class="loading-progress-bar" role="progressbar" aria-label="Loading progress"
          aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">

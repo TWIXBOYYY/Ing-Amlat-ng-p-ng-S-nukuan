@@ -45,13 +45,13 @@
 .settings-sliders {
   display: flex;
   flex-direction: column;
-  gap: clamp(14px, 2.5vmin, 26px);
+  gap: clamp(22px, 4vmin, 42px);
 }
 
 .settings-row {
   display: flex;
   align-items: center;
-  gap: clamp(8px, 1.5vmin, 16px);
+  gap: clamp(12px, 2vmin, 22px);
 }
 
 .settings-row-label {

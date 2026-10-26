@@ -147,9 +147,9 @@
   pointer-events: none;
 }
 
-/* Settings icon.png is white — make it dark/visible on the parchment frame */
+/* Settings icon.png is white — add dark shadow outline for visibility on parchment frame */
 #reader-settings-btn .reader-hud-btn-img {
-  filter: brightness(0);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95)) drop-shadow(0 0 2px rgba(0,0,0,0.9));
 }
 
 /* Restart — uses Restart.png as the full button frame */
