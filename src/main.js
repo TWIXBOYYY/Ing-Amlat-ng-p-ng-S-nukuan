@@ -9,6 +9,7 @@ import './screens/about/about.css';
 import './screens/credits/credits.css';
 import './screens/reader/reader.css';
 import './screens/characters/characters.css';
+import './screens/minigame/minigame.css';
 import './components/settings/settings.css';
 
 /* ── Utilities ── */
@@ -26,6 +27,7 @@ import { createAboutScreen,   mountAbout }    from './screens/about/about.js';
 import { createCreditsScreen, mountCredits }  from './screens/credits/credits.js';
 import { createReaderScreen,  mountReader, unmountReader } from './screens/reader/reader.js';
 import { createCharactersScreen, mountCharacters } from './screens/characters/characters.js';
+import { createMinigameScreen, mountMinigame }     from './screens/minigame/minigame.js';
 
 /* ── Settings overlay (lives above all screens) ── */
 import { createSettingsOverlay } from './components/settings/settings.js';
@@ -50,6 +52,7 @@ function bootstrap() {
     createCreditsScreen(),
     createReaderScreen(),
     createCharactersScreen(),
+    createMinigameScreen(),
   ];
   screens.forEach(s => app.appendChild(s));
 
@@ -65,6 +68,7 @@ function bootstrap() {
   registerScreen('#credits', { mount: (el) => mountCredits(el) });
   registerScreen('#reader',  { mount: (el) => mountReader(el), unmount: (el) => unmountReader(el) });
   registerScreen('#characters', { mount: (el) => mountCharacters(el) });
+  registerScreen('#minigame',   { mount: (el) => mountMinigame(el)   });
 
   // 6. Always start at splash — ignore any hash left in the URL from a previous session
   history.replaceState(null, '', '#splash');

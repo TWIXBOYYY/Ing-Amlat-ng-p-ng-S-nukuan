@@ -147,9 +147,20 @@
   pointer-events: none;
 }
 
-/* Settings icon.png is white — add dark shadow outline for visibility on parchment frame */
-#reader-settings-btn .reader-hud-btn-img {
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95)) drop-shadow(0 0 2px rgba(0,0,0,0.9));
+/* Settings button uses a <span> wrapper with 3 bar images */
+span.reader-hud-btn-img {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(2px, 0.4vmin, 4px);
+}
+
+span.reader-hud-btn-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
 }
 
 /* Restart — uses Restart.png as the full button frame */

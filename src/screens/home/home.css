@@ -116,7 +116,21 @@
   display: block;
   pointer-events: none;
   user-select: none;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95)) drop-shadow(0 0 2px rgba(0,0,0,0.9));
+}
+
+span.home-settings-btn-img {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(2px, 0.4vmin, 4px);
+}
+
+span.home-settings-btn-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
 }
 
 /* Continue button — hidden until a saved page exists */

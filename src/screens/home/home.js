@@ -30,7 +30,11 @@ export function createHomeScreen() {
 
     <!-- Settings button -->
     <button class="home-settings-btn" aria-label="Open audio settings">
-      <img src="/assets/ui/Settings icon.png" class="home-settings-btn-img" alt="" aria-hidden="true" draggable="false"/>
+      <span class="home-settings-btn-img" aria-hidden="true">
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+      </span>
     </button>
 
     <!-- Continue reading (hidden until saved progress exists) -->
