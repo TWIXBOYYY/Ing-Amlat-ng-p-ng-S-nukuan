@@ -10,33 +10,27 @@ const CREDITS_DATA = [
   {
     section: 'Team',
     entries: [
-      { name: '[Name Placeholder]', role: 'Lead Artist / Art Direction' },
-      { name: '[Name Placeholder]', role: 'Story & Script'              },
-      { name: '[Name Placeholder]', role: 'Animation & UI Design'       },
-      { name: '[Name Placeholder]', role: 'Web Development'             },
-    ],
-  },
-  {
-    section: 'Audio',
-    entries: [
-      { name: '[Name Placeholder]', role: 'Original Music Composition'  },
-      { name: '[Name Placeholder]', role: 'Sound Design & SFX'          },
-      { name: '[Name Placeholder]', role: 'Voice Direction & Narration' },
+      { name: 'Drew Alban',     role: 'Creative Director & Leader' },
+      { name: 'Leann Limjoco',  role: 'Artist'                     },
+      { name: 'Crishel Marquez', role: 'Research Lead & UI Design' },
+      { name: 'Angel Omampo',   role: 'Artist & Web Lead'          },
     ],
   },
   {
     section: 'Special Thanks',
     entries: [
-      { name: '[Name Placeholder]', role: 'Research Adviser'            },
-      { name: '[Name Placeholder]', role: 'Cultural Consultant'         },
+      { name: 'Kristia Quismundo', role: 'Scriptwriter'          },
+      { name: 'Jedi Directo',      role: 'Research Adviser'      },
+      { name: 'Owen',              role: 'Web Developer'         },
+      { name: 'Brian Ragaza',      role: 'Technical Adviser'     },
+      { name: 'Mike Pangilinan',   role: 'Cultural Consultant'   },
     ],
   },
   {
-    section: 'Tools & Libraries',
+    section: 'Audio',
     entries: [
-      { name: 'GSAP',    role: 'Animation library by GreenSock' },
-      { name: 'Howler.js', role: 'Audio library'               },
-      { name: 'Vite',    role: 'Build tool'                    },
+      { name: 'Name 3', role: 'Apùng Sinùkuan · Voice Actor & Narration'  },
+      { name: 'Name 4', role: 'Apùng Panàbang · Voice Actor & Narration'  },
     ],
   },
 ];
@@ -61,9 +55,7 @@ export function createCreditsScreen() {
   el.innerHTML = `
     <h2 class="credits-title">CREDITS</h2>
     <div class="credits-grid">${sectionsHTML}</div>
-    <p class="credits-footer">
-      "Ing Amlat ng Ápûng Sinukuan" &nbsp;·&nbsp; Áyup Productions &nbsp;·&nbsp; 2026
-    </p>
+    <p class="credits-footer">Dakal a Salamat!</p>
     <button class="screen-back-btn" aria-label="Go back to home">
       <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img nav-arrow-flip" alt="" aria-hidden="true" draggable="false"/>
       <span class="screen-back-label">Back</span>
