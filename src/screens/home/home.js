@@ -20,6 +20,12 @@ export function createHomeScreen() {
     <div class="home-mountain-mid-r"                             aria-hidden="true"></div>
     <div class="home-layer home-ground"        data-depth="0.14" aria-hidden="true"></div>
 
+    <!-- Title -->
+    <div class="home-title-block" aria-label="Ing Amlat ng Ápûng Sinukuan">
+      <h1 class="home-title">Ing Amlat ng<br>Ápûng Sinukuan</h1>
+      <p class="home-tagline">A World Woven, A Legacy Awakened</p>
+    </div>
+
     <!-- Main menu -->
     <nav class="home-menu" role="navigation" aria-label="Main menu">
       <button class="home-menu-btn" data-action="story"     >Story</button>
@@ -49,18 +55,21 @@ export function mountHome(el) {
   const settingsBtn = el.querySelector('.home-settings-btn');
 
   // Animate in every visit
-  const menu    = el.querySelector('.home-menu');
-  const menuBtns = el.querySelectorAll('.home-menu-btn');
-  gsap.set(menu,        { opacity: 1 }); // container must be visible; buttons handle their own fade
+  const menu       = el.querySelector('.home-menu');
+  const menuBtns   = el.querySelectorAll('.home-menu-btn');
+  const titleBlock = el.querySelector('.home-title-block');
+  gsap.set(menu,        { opacity: 1 });
   gsap.set(menuBtns,    { opacity: 0, y: 22 });
   gsap.set(settingsBtn, { opacity: 0, y: -20 });
+  gsap.set(titleBlock,  { opacity: 0, y: -18 });
 
+  gsap.to(titleBlock,  { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.1 });
   gsap.to(menuBtns, {
     opacity: 1, y: 0,
     duration: 0.7, ease: 'power3.out',
-    stagger: 0.12, delay: 0.25,
+    stagger: 0.12, delay: 0.4,
   });
-  gsap.to(settingsBtn, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', delay: 0.55 });
+  gsap.to(settingsBtn, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', delay: 0.7 });
 
   // Only wire up listeners once
   if (el._mounted) return;
@@ -103,5 +112,5 @@ export function mountHome(el) {
 /** @param {HTMLElement} el */
 export function unmountHome(el) {
   if (el._cleanup) { el._cleanup(); el._cleanup = null; }
-  gsap.killTweensOf(el.querySelectorAll('[data-depth], .home-menu-btn, .home-settings-btn'));
+  gsap.killTweensOf(el.querySelectorAll('[data-depth], .home-menu-btn, .home-settings-btn, .home-title-block'));
 }

@@ -32,11 +32,11 @@
 }
 
 .char-name {
-  font-family: var(--font-heading);
+  font-family: var(--font-tribal);
   font-size: clamp(1.8rem, 5.5vmin, 4rem);
-  font-weight: 700;
+  font-weight: 400;
   color: var(--color-navy);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   line-height: 1.1;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .char-description {
-  font-family: var(--font-body);
+  font-family: var(--font-mclaren);
   font-size: var(--fs-body);
   line-height: 1.7;
   color: var(--color-text-dark);
