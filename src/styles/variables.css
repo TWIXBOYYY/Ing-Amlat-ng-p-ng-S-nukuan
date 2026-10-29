@@ -5,6 +5,20 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Tribal Broots';
+  src: url('/assets/fonts/Tribal Broots.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'McLaren';
+  src: url('/assets/fonts/McLaren-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   /* Brand colours extracted from reference designs */
   --color-navy:           #2a2758;
@@ -27,6 +41,8 @@
   --font-menu:      'Cormorant Garamond', serif;
   --font-body:      'Lora', serif;
   --font-settings:  'Lexend', sans-serif;
+  --font-tribal:    'Tribal Broots', serif;
+  --font-mclaren:   'McLaren', sans-serif;
 
   /* Stage dimensions (design baseline) */
   --stage-w: 1920px;
