@@ -1,268 +1,599 @@
 .screen-minigame {
-  background: #1a1a3e;
-  align-items: center;
-  justify-content: center;
+  --stage-w: min(100vw, calc(100dvh * 704 / 397));   /* Figma frame is 704 x 397 */
+  --paper: url('/assets/ui/background minigame.png');
+  background: #413f6a;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
-/* ── Board — parchment panel ── */
-.mg-board {
-  position: relative;
-  background: url('/assets/ui/background minigame.png') center/100% 100% no-repeat;
-  border: none;
-  border-radius: 0;
-  padding: clamp(14px, 2vmin, 28px) clamp(24px, 3.5vw, 56px) clamp(16px, 2.5vmin, 32px);
-  width: min(94vw, 1060px);
-  box-shadow: none;
+/* ═══════════════════════════════
+   Shared
+   ═══════════════════════════════ */
+.mg-title-wrap { display: contents; }
+
+.mg-title {
+  font-family: var(--font-settings);
+  font-weight: 800;
+  color: #000;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1;
+  margin: 0;
 }
 
-/* ── Header ── */
-.mg-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(44px, 7vmin, 68px);
-  margin-bottom: clamp(12px, 2vmin, 22px);
+.mg-subtitle {
+  font-family: var(--font-settings);
+  font-weight: 400;
+  color: #111;
+  white-space: nowrap;
+  line-height: 1;
+  margin: 0;
 }
 
+/* ── Back button — icon only ── */
 .mg-home-btn {
-  position: absolute;
-  top: 0;
-  left: 0;
   background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
   border: none;
   padding: 0;
-  width: clamp(44px, 6.5vmin, 64px);
-  height: clamp(44px, 6.5vmin, 64px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
   transition: transform 0.15s, filter 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.mg-home-btn:hover { transform: scale(1.1); filter: drop-shadow(0 3px 12px rgba(0,0,0,0.7)) brightness(1.15); }
+.mg-home-btn:hover,
+.mg-home-btn:focus-visible { transform: scale(1.08); filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.7)) brightness(1.15); outline: none; }
+.mg-home-btn:active { transform: scale(0.96); }
 
 .mg-home-arrow {
-  width: 55%;
-  height: 55%;
-  object-fit: contain;
+  width: 45%;
+  height: auto;
   display: block;
   pointer-events: none;
 }
 
-.mg-title-wrap {
-  text-align: center;
-}
-
-.mg-title {
-  font-family: var(--font-heading);
-  font-size: clamp(18px, 3.2vmin, 34px);
-  font-weight: 800;
-  color: #111;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.mg-subtitle {
-  font-family: var(--font-body, sans-serif);
-  font-size: clamp(10px, 1.5vmin, 15px);
-  color: #444;
-  margin-top: 3px;
-}
-
-/* ── Card grid ── */
-.mg-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(10px, 1.8vmin, 22px);
-  margin-bottom: clamp(12px, 2vmin, 22px);
-}
-
-.mg-card {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(5px, 0.8vmin, 10px);
-}
+/* ── Cards ── */
+.mg-card { position: relative; }
 
 .mg-img-slot {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1.64;
   background: #fff;
-  border: 2px solid #222;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid #bdbdbd;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
+.mg-img-slot picture { display: contents; }
+
 .mg-img-slot img {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  display: block;
+  padding: 6%;
+  box-sizing: border-box;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.15s;
 }
 
-.mg-img-placeholder-label {
-  font-family: var(--font-heading);
-  font-size: clamp(9px, 1.3vmin, 13px);
-  color: rgba(0,0,0,0.25);
-  text-align: center;
-  padding: 4px;
+.mg-img-slot img.is-loaded { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-img-slot img { transition: none; }
 }
 
-/* ── Drop zones ── */
+/* ── Name slots: overlap the bottom edge of their card ── */
 .mg-drop-zone {
-  min-height: clamp(30px, 4.5vmin, 44px);
+  position: absolute;
+  left: 50%;
+  top: 92%;
+  width: 88.9%;
+  height: 36%;
+  min-height: 32px;
+  transform: translateX(-50%);
+  box-sizing: border-box;
   background: #fff;
-  border: 2px solid #222;
-  border-radius: 6px;
+  border: 1px solid #3a3a3a;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-body, sans-serif);
-  font-size: clamp(9px, 1.35vmin, 13px);
-  color: #333;
-  font-weight: 600;
+  font-family: var(--font-settings);
+  color: #111;
   text-align: center;
-  padding: 4px 6px;
+  white-space: nowrap;
   transition: background 0.18s, border-color 0.18s;
-  cursor: default;
+  cursor: pointer;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.mg-drop-zone.drag-over {
-  background: rgba(201,162,39,0.2);
-  border-color: #c9a227;
+/* a filled slot can be dragged out again: only then does it take over touch scrolling */
+.mg-drop-zone[data-filled] {
+  touch-action: none;
+  cursor: grab;
 }
 
-.mg-drop-zone.filled {
-  background: #f0f0f0;
-  color: #111;
-}
+.mg-drop-zone.drag-over { background: rgba(201, 162, 39, 0.2); border-color: #c9a227; }
+.mg-drop-zone.filled    { background: #f0f0f0; color: #111; }
+.mg-drop-zone.correct   { background: #d4edda; border-color: #28a745; color: #155724; }
+.mg-drop-zone.wrong     { background: #f8d7da; border-color: #dc3545; color: #721c24; }
 
-.mg-drop-zone.correct {
-  background: #d4edda;
-  border-color: #28a745;
-  color: #155724;
-}
-
-.mg-drop-zone.wrong {
-  background: #f8d7da;
-  border-color: #dc3545;
-  color: #721c24;
-}
-
-/* ── Name tags ── */
-.mg-names {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(6px, 1vmin, 14px);
-  justify-content: center;
-}
-
+/* ── Name chips ── */
 .mg-tag {
+  box-sizing: border-box;
   background: #fff;
-  border: 1.5px solid #333;
-  border-radius: 20px;
-  padding: clamp(5px, 0.7vmin, 9px) clamp(14px, 1.8vw, 26px);
-  font-family: var(--font-body, sans-serif);
-  font-size: clamp(9px, 1.35vmin, 13px);
+  border: 1px solid #3a3a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-settings);
   color: #111;
+  text-align: center;
+  white-space: nowrap;
   cursor: grab;
   user-select: none;
   transition: opacity 0.2s, box-shadow 0.15s;
-  white-space: nowrap;
 }
 
-.mg-tag:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-.mg-tag:active { cursor: grabbing; }
-.mg-tag.dragging { opacity: 0.3; }
+.mg-tag:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
 .mg-tag.used { opacity: 0; pointer-events: none; }
 
-/* ── Result modal ── */
-.mg-modal {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
+/* chips (and filled slots) are the only things that capture touch gestures */
+.mg-tag {
+  touch-action: none;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mg-tag.dragging,
+.mg-drop-zone.dragging { opacity: 0.35; }
+
+/* tap-selected chip: gold ring, the same gold as the drop highlight */
+.mg-tag.is-selected {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.25);
+}
+
+.mg-tag:focus-visible,
+.mg-drop-zone:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
+}
+
+/* grabbing cursor everywhere while a drag is in progress */
+body.mg-is-dragging,
+body.mg-is-dragging * { cursor: grabbing !important; }
+
+/* Drag ghost: lives in <body>; size and font are copied from the source chip */
+.mg-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+  width: var(--gw);
+  height: var(--gh);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
-  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: var(--gr);
+  font-family: var(--font-settings);
+  font-size: var(--gf);
+  color: #111;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  scale: 1.05;
+  opacity: 0.95;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35));
+  will-change: transform;
 }
 
-.mg-modal[hidden] { display: none; }
+.mg-ghost.is-returning { transition: transform 150ms ease-out; }
+
+/* touch screens: chips and slots are at least 44px tall */
+@media (pointer: coarse) {
+  .mg-tag,
+  .mg-drop-zone { min-height: 44px; }
+}
+
+/* ── Result popup ──
+   The box is one scalable unit: every value inside is a % of its width or cqw. */
+.mg-modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  background: rgba(205, 205, 212, 0.35);
+  -webkit-backdrop-filter: blur(4px) grayscale(1);
+  backdrop-filter: blur(4px) grayscale(1);
+}
+
+.mg-modal.is-open { display: flex; }
 
 .mg-modal-box {
-  background: #1a1a2e;
-  border: 3px solid #c9a227;
-  border-radius: 10px;
-  padding: clamp(24px, 4vmin, 52px) clamp(28px, 5vw, 80px);
-  text-align: center;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.7);
-  min-width: clamp(220px, 40vw, 400px);
+  position: relative;
+  width: calc(var(--stage-w) * 0.355);
+  aspect-ratio: 250 / 193;
+  container-type: inline-size;
+  background: #b8a46f;
+  border-radius: 1.2%;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+}
+
+.mg-modal-panel {
+  position: absolute;
+  inset: 2.4cqw;
+  background: #3b3b3b;
+  border-radius: 0.8cqw;
 }
 
 .mg-modal-result {
-  font-family: var(--font-heading);
-  font-size: clamp(26px, 4.5vmin, 48px);
-  font-weight: 800;
-  color: #22c55e;
-  margin-bottom: clamp(6px, 1vmin, 14px);
+  position: absolute;
+  left: 50%;
+  top: 20.2%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: var(--font-mclaren);
+  font-size: 11.9cqw;
+  line-height: 1;
+  white-space: nowrap;
+  color: #52ff14;
+  -webkit-text-stroke: 0.6cqw #52ff14;
+  paint-order: stroke fill;
 }
 
-.mg-modal-result.partial { color: #f59e0b; }
+.mg-modal-result.partial {
+  color: #ffb347;
+  -webkit-text-stroke-color: #ffb347;
+}
 
 .mg-modal-score {
-  font-family: var(--font-heading);
-  font-size: clamp(14px, 2vmin, 22px);
+  position: absolute;
+  left: 18.4%;
+  top: 49.7%;
+  transform: translateY(-50%);
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-settings);
+  font-size: 6.5cqw;            /* the "/6" */
+  line-height: 1;
   color: #fff;
-  margin-bottom: clamp(18px, 2.8vmin, 36px);
+}
+
+.mg-modal-score-label {
+  font-size: 4.4cqw;
+  margin-right: 10cqw;
 }
 
 .mg-modal-score strong {
-  font-size: clamp(26px, 4vmin, 44px);
-}
-
-.mg-modal-btns {
-  display: flex;
-  gap: clamp(10px, 1.5vmin, 20px);
-  justify-content: center;
+  font-size: 22cqw;
+  font-weight: 400;
+  line-height: 1;
 }
 
 .mg-modal-btn {
+  position: absolute;
+  top: 69.4%;
+  width: 32%;
+  aspect-ratio: 2.28;
   background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
   border: none;
-  padding: clamp(8px, 1.2vmin, 16px) clamp(18px, 2.5vw, 44px);
-  font-family: var(--font-heading);
-  font-size: clamp(10px, 1.5vmin, 16px);
-  font-weight: 700;
+  padding: 0;
+  font-family: var(--font-settings);
+  font-size: 4.4cqw;
   color: #fff;
-  letter-spacing: 0.07em;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
   cursor: pointer;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
   transition: transform 0.15s, filter 0.15s;
-  min-width: clamp(90px, 13vw, 160px);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.mg-modal-btn:hover {
-  transform: scale(1.07);
-  filter: drop-shadow(0 3px 12px rgba(0,0,0,0.7)) brightness(1.12);
-}
+#mg-retry-btn { left: 11.2%; }
+#mg-home-modal-btn { left: 58%; }
 
+.mg-modal-btn:hover,
+.mg-modal-btn:focus-visible { transform: scale(1.05); filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.7)) brightness(1.12); outline: none; }
+.mg-modal-btn:focus-visible { box-shadow: 0 0 0 0.5cqw #fff; border-radius: 1.5cqw; }
 .mg-modal-btn:active { transform: scale(0.96); }
 
-/* ── Portrait / small screens ── */
-@media (orientation: portrait), (max-width: 600px) {
+/* ═══════════════════════════════════════════════════════════
+   Landscape — Figma stage (704 x 397), centered in the viewport.
+   Positions are % of the stage, sizes/fonts are cqw of the stage.
+   ═══════════════════════════════════════════════════════════ */
+@media (min-aspect-ratio: 1/1) {
   .mg-board {
-    width: 96vw;
-    padding: clamp(10px, 2vmin, 20px) clamp(10px, 2vw, 22px);
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: var(--stage-w);
+    height: calc(var(--stage-w) * 397 / 704);
+    container-type: inline-size;
+  }
+
+  .mg-board::before {
+    content: '';
+    position: absolute;
+    left: 2.1%;
+    top: 3.8%;
+    width: 95.3%;
+    height: 91.9%;
+    background: var(--paper) center/100% 100% no-repeat;
+  }
+
+  .mg-home-btn {
+    position: absolute;
+    left: 5.1%;
+    top: 6.3%;
+    width: 5.8%;
+    aspect-ratio: 1.24;
+  }
+
+  .mg-title {
+    position: absolute;
+    left: 50%;
+    top: 11.1%;
+    transform: translate(-50%, -50%);
+    font-size: max(2.58cqw, 18px);
+  }
+
+  .mg-subtitle {
+    position: absolute;
+    left: 50%;
+    top: 16.4%;
+    transform: translate(-50%, -50%);
+    font-size: max(1.57cqw, 12px);
+  }
+
+  /* 3 x 2 cards: column centres 24.7 / 50 / 75.3%, card 16.8% wide, rows at 21.4% / 45.1% */
+  .mg-grid {
+    position: absolute;
+    left: 16.3%;
+    top: 21.4%;
+    display: grid;
+    grid-template-columns: repeat(3, 16.8cqw);
+    column-gap: 8.5cqw;
+    row-gap: 3.12cqw;
+  }
+
+  .mg-img-slot { border-radius: 1.2cqw; }
+
+  .mg-drop-zone {
+    border-radius: 0.9cqw;
+    font-size: max(1.15cqw, 11px);
+  }
+
+  /* 3 x 2 chips */
+  .mg-names {
+    position: absolute;
+    left: 50%;
+    top: 73%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(3, 15.1cqw);
+    column-gap: 1.7cqw;
+    row-gap: 0.79cqw;
+  }
+
+  .mg-tag {
+    height: 3.67cqw;
+    border-radius: 0.9cqw;
+    font-size: max(1.15cqw, 11px);
+  }
+}
+
+/* Result popup on any portrait screen */
+@media (max-aspect-ratio: 1/1) {
+  .mg-modal-box { width: min(88vw, 24rem); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Phone portrait (< 600px) — normal flow; the paper is a 9-slice so
+   the torn edges keep their shape while the height follows the content.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-aspect-ratio: 1/1) and (max-width: 599.98px) {
+  .screen-minigame.active {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right))
+             calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  }
+
+  .mg-board {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 28px;
+    border-image: var(--paper) 120 fill / 1 stretch;
+    padding: clamp(4px, 1.5vw, 14px);
+  }
+
+  .mg-home-btn {
+    position: relative;
+    width: clamp(44px, 12vw, 60px);
+    aspect-ratio: 1.24;
+  }
+
+  .mg-title {
+    margin-top: 6px;
+    text-align: center;
+    font-size: clamp(1.5rem, 7vw, 2.4rem);
+  }
+
+  .mg-subtitle {
+    margin: 6px 0 clamp(14px, 3vw, 24px);
+    text-align: center;
+    white-space: normal;
+    font-size: clamp(0.85rem, 3.4vw, 1.1rem);
   }
 
   .mg-grid {
-    gap: clamp(6px, 1.2vmin, 14px);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 6%;
+    row-gap: 7cqw;                 /* 7% of the grid width (a % row-gap would resolve against an unknown height) */
+    container-type: inline-size;
+    margin-bottom: clamp(14px, 3vw, 24px);
+  }
+
+  /* the name slot hangs 28% of the card height below the card: reserve that space.
+     The slot keeps its 92% / 36% placement relative to the card art (÷ 1.28 of the padded box). */
+  .mg-card { padding-bottom: calc(100% * 0.28 / 1.64); }
+
+  .mg-drop-zone {
+    top: 71.875%;
+    height: 28.125%;
+  }
+
+  .mg-img-slot { border-radius: 8px; }
+
+  .mg-drop-zone {
+    border-radius: 6px;
+    font-size: clamp(0.7rem, 3vw, 0.95rem);
+    min-height: 44px;
+  }
+
+  .mg-names {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-width: 24rem;
+    margin: 0 auto;
+  }
+
+  .mg-tag {
+    min-height: 44px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    white-space: normal;
+    font-size: clamp(0.8rem, 3.4vw, 1rem);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Tablet portrait (>= 600px wide) — a 3:4 stage; the board IS the
+   paper (94% x 96% of the stage) and is the size container, so every
+   position is a % of the paper and every size/font is cqw of the paper.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .screen-minigame {
+    --stage-w: min(100vw, calc(100dvh * 3 / 4));
+  }
+
+  .mg-board {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: calc(var(--stage-w) * 0.94);
+    height: calc(var(--stage-w) * 4 / 3 * 0.96);
+    container-type: size;
+  }
+
+  /* 9-slice paper: torn edges and bottom notches keep their shape */
+  .mg-board::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 5cqw;
+    border-image: var(--paper) 120 fill / 1 stretch;
+  }
+
+  .mg-home-btn {
+    position: absolute;
+    left: 4.5%;
+    top: 2.6%;
+    width: 8.4%;
+    min-width: 48px;
+    aspect-ratio: 1.24;
+  }
+
+  .mg-title {
+    position: absolute;
+    left: 50%;
+    top: 6.4%;
+    transform: translate(-50%, -50%);
+    font-size: 5.4cqw;
+  }
+
+  .mg-subtitle {
+    position: absolute;
+    left: 50%;
+    top: 10.4%;
+    transform: translate(-50%, -50%);
+    font-size: max(2.5cqw, 16px);
+  }
+
+  /* 2 x 3 cards: 36% wide at 10% / 54%, rows at 14.0 / 35.9 / 57.8% of the paper height */
+  .mg-grid {
+    position: absolute;
+    left: 10%;
+    top: 14%;
+    display: grid;
+    grid-template-columns: repeat(2, 36cqw);
+    column-gap: 8cqw;
+    row-gap: 7.88cqw;
+  }
+
+  .mg-img-slot { border-radius: 2cqw; }
+
+  .mg-drop-zone {
+    border-radius: 1.5cqw;
+    font-size: 2.5cqw;
+  }
+
+  /* 3 x 2 chips under the cards, wide enough for one line each */
+  .mg-names {
+    position: absolute;
+    left: 50%;
+    top: 80.8%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(3, 26cqw);
+    column-gap: 2.5cqw;
+    row-gap: 1.6cqw;
+  }
+
+  .mg-tag {
+    height: 7cqw;
+    border-radius: 1.5cqw;
+    font-size: max(2.3cqw, 14px);
+  }
+
+  /* Mallari: the bust piece, cropped to fill the landscape card */
+  .mg-img-slot img.mg-img--head {
+    object-fit: cover;
+    object-position: 50% 14%;
+  }
+
+  /* Aldo's pale soul is nearly invisible on white: give it contrast and a soft edge */
+  .mg-card[data-id="aldo"] .mg-img-slot img {
+    filter: contrast(1.6) saturate(1.5) drop-shadow(0 0 0.6cqw rgba(140, 100, 20, 0.85));
   }
 }

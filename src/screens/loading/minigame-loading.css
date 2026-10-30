@@ -1,0 +1,111 @@
+/* Background: full-bleed, cropped from a fixed focal point.
+   0% vertical keeps the top edge (the head/hair is never clipped); 30% horizontal
+   keeps the face and the orb in view on screens narrower than 16:9. */
+.screen-minigame-loading {
+  background: #111;
+  overflow: hidden;
+}
+
+.mgl-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 30% 0%;
+  user-select: none;
+  z-index: 0;
+}
+
+/* "LOADING..." row, positioned against the viewport.
+   The lockup image is sun + text; everything inside is sized from the row width
+   (1cqw = 1% of the row). Sun icon centre = 14.9% / 49.6% of the image. */
+.mgl-row {
+  --w: max(23vw, 135px);          /* sun ~5.6vw, text ~10.6vw (never below a 32px sun) */
+  position: absolute;
+  left: 71.4%;
+  top: 89%;
+  width: var(--w);
+  transform: translate(-14.9%, -49.6%);
+  container-type: inline-size;
+  z-index: 2;
+}
+
+/* Only the "LOADING" text of the lockup is used; the sun part (left ~29%) is
+   clipped away and replaced by the real loading sun below. */
+.mgl-lockup {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  clip-path: inset(0 0 0 29%);
+}
+
+/* SUN (for loading).png: the artwork's sun spans ~78% of the image width and is
+   centred at 50% / 48.8%; size it so the sun matches the lockup's sun (24.5cqw). */
+.mgl-sun {
+  position: absolute;
+  left: 14.9cqw;
+  top: 49.6%;
+  width: 31cqw;
+  height: auto;
+  translate: -50% -48.8%;
+  transform-origin: 50% 48.8%;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mgl-sun {
+    animation: mgl-sun-spin 8s linear infinite;
+  }
+}
+
+@keyframes mgl-sun-spin {
+  to { rotate: 360deg; }
+}
+
+/* Three dots after the text, on its baseline */
+.mgl-dot {
+  position: absolute;
+  top: 67%;
+  width: 3.3cqw;
+  aspect-ratio: 1;
+  border-radius: 0.5cqw;
+  background: #fff;
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.mgl-dot:nth-of-type(1) { left: 83.6cqw; }
+.mgl-dot:nth-of-type(2) { left: 90.2cqw; }
+.mgl-dot:nth-of-type(3) { left: 96.8cqw; }
+
+.mgl-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Portrait: row centred near the bottom, over a soft gradient for legibility */
+@media (max-aspect-ratio: 1/1) {
+  .screen-minigame-loading::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent 35%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .mgl-row {
+    --w: clamp(147px, 45vw, 262px);   /* sun icon ~ clamp(36px, 11vw, 64px) */
+    left: 50%;
+    top: auto;
+    bottom: calc(8dvh + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+  }
+}

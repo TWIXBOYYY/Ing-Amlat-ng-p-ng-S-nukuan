@@ -22,8 +22,8 @@ export function createHomeScreen() {
 
     <!-- Title -->
     <div class="home-title-block" aria-label="Ing Amlat ng Ápûng Sinukuan">
-      <h1 class="home-title">Ing Amlat ng<br>Ápûng Sinukuan</h1>
-      <p class="home-tagline">A World Woven, A Legacy Awakened</p>
+      <img src="/assets/ui/Homepage Text.png" class="home-title-img" alt="Ing Amlat ng Ápûng Sinukuan" draggable="false"/>
+      <img src="/assets/ui/A World Woven, A Legacy Awakened.png" class="home-tagline-img" alt="A World Woven, A Legacy Awakened" draggable="false"/>
     </div>
 
     <!-- Main menu -->
@@ -35,7 +35,7 @@ export function createHomeScreen() {
     </nav>
 
     <!-- Settings button -->
-    <button class="home-settings-btn" aria-label="Open audio settings">
+    <button class="home-settings-btn" aria-label="Open audio settings" aria-expanded="false">
       <span class="home-settings-btn-img" aria-hidden="true">
         <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
         <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>

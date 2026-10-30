@@ -19,6 +19,13 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Jack Armstrong';
+  src: url('/assets/fonts/Jack Armstrong.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   /* Brand colours extracted from reference designs */
   --color-navy:           #2a2758;
@@ -43,6 +50,7 @@
   --font-settings:  'Lexend', sans-serif;
   --font-tribal:    'Tribal Broots', serif;
   --font-mclaren:   'McLaren', sans-serif;
+  --font-title:     'Jack Armstrong', cursive;
 
   /* Stage dimensions (design baseline) */
   --stage-w: 1920px;
