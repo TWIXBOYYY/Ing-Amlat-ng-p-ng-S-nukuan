@@ -1,106 +1,126 @@
 .screen-characters {
+  --stage-w: min(100vw, calc(100dvh * 16 / 9));
+  --stage-h: calc(var(--stage-w) * 9 / 16);
+  --u: calc(var(--stage-w) / 100);
+  --char-border-h: clamp(48px, 8dvh, 96px);
   background: url('/assets/ui/BACKGROUND.png') center/cover no-repeat var(--color-parchment);
+  --bt: calc(var(--stage-w) * 118 / 1920);
+  --bb: calc(var(--stage-w) * 105 / 1920);
   overflow: hidden;
+  box-sizing: border-box;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Main viewer (art + text side by side) ── */
-.char-viewer {
+/* ═══════════════════════════════
+   Shared (both modes)
+   ═══════════════════════════════ */
+
+/* ── Decorative borders — pinned to the viewport edges ── */
+.char-border {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(72px, 10vmin, 110px) clamp(80px, 10vw, 160px) clamp(80px, 12vmin, 120px);
-  gap: clamp(40px, 6vw, 100px);
+  left: 0;
+  width: 100%;
+  background-repeat: repeat-x;
+  background-position: center;
+  background-size: auto 100%;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
 }
 
-/* ── Left — text block ── */
+.char-border-top {
+  top: 0;
+  background-image: url('/assets/ui/UPPER BORDER.png');
+}
+
+.char-border-bottom {
+  bottom: 0;
+  background-image: url('/assets/ui/LOWER BORDER.png');
+}
+
+/* ── Art ── */
+.char-viewer {
+  touch-action: pan-y;
+}
+
+.char-art[hidden],
+.char-art-row[hidden] {
+  display: none;
+}
+
+/* --dx is animated by GSAP; individual `translate` composes with any transform */
+.char-art,
 .char-text {
-  flex: 1;
-  max-width: 580px;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 2vmin, 20px);
+  translate: var(--dx, 0) 0;
 }
 
-.char-counter {
-  font-family: var(--font-heading);
-  font-size: var(--fs-ui);
-  letter-spacing: 0.18em;
-  color: var(--color-gold-dark);
-  text-transform: uppercase;
+.char-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  pointer-events: none;
+}
+
+/* ── Text ── */
+.char-text {
+  z-index: 1;
 }
 
 .char-name {
   font-family: var(--font-tribal);
-  font-size: clamp(1.8rem, 5.5vmin, 4rem);
   font-weight: 400;
-  color: var(--color-navy);
+  color: #1a1a1a;
   letter-spacing: 0.04em;
   line-height: 1.1;
 }
 
-.char-subtitle {
-  font-family: var(--font-menu);
-  font-size: clamp(0.95rem, 2.2vmin, 1.5rem);
-  font-weight: 600;
-  color: var(--color-gold-dark);
-  letter-spacing: 0.08em;
-  font-style: italic;
-}
-
 .char-description {
   font-family: var(--font-mclaren);
-  font-size: var(--fs-body);
-  line-height: 1.7;
-  color: var(--color-text-dark);
+  color: #1a1a1a;
 }
 
-/* ── Right — art placeholder ── */
-.char-art {
-  flex-shrink: 0;
-  width: clamp(260px, 38vw, 560px);
-  height: clamp(260px, 38vw, 560px);
+.char-description p {
+  margin: 0;
 }
 
-.char-art-placeholder {
-  width: 100%;
-  height: 100%;
-  border: 2px dashed rgba(158,126,26,0.45);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(158,126,26,0.06);
+.char-description p + p {
+  margin-top: 1.15em;
 }
 
-.char-art-label {
-  font-family: var(--font-heading);
-  font-size: var(--fs-ui);
-  letter-spacing: 0.14em;
-  color: rgba(42,39,88,0.35);
-  text-transform: uppercase;
-  text-align: center;
-  padding: 0 16px;
-}
-
-/* ── Bottom navigation ── */
+/* ── Pagination ── */
 .char-nav {
-  position: absolute;
-  bottom: clamp(20px, 4vmin, 48px);
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: clamp(24px, 4vw, 64px);
+  z-index: 3;
+}
+
+.char-dots {
+  display: flex;
+  align-items: center;
+}
+
+.char-dot {
+  padding: 0;
+  border: none;
+  background: url('/assets/ui/Grey Button.png') center/contain no-repeat;
+  cursor: url('/assets/ui/CURSOR.png') 20 6, pointer;
+}
+
+.char-dot.is-active {
+  background-image: url('/assets/ui/Selected Button.png');
 }
 
 .char-nav-btn {
-  width: clamp(52px, 8vmin, 96px);
-  height: clamp(52px, 8vmin, 96px);
   background: none;
   border: none;
   padding: 0;
+  display: grid;
+  place-items: center;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
   transition: transform 0.15s, filter 0.15s;
   cursor: url('/assets/ui/CURSOR.png') 20 6, pointer;
@@ -113,14 +133,19 @@
   outline: none;
 }
 
+.char-nav-btn:active:not(:disabled),
+.char-dot:active {
+  transform: scale(0.96);
+}
+
 .char-nav-btn:disabled {
   opacity: 0.25;
   cursor: default;
 }
 
 .char-nav-img {
-  width: 100%;
-  height: 100%;
+  width: var(--arrow);
+  height: var(--arrow);
   object-fit: contain;
   display: block;
   user-select: none;
@@ -131,24 +156,559 @@
   transform: scaleX(-1);
 }
 
-/* ── Portrait / narrow ── */
-@media (orientation: portrait), (max-width: 700px) {
-  .char-viewer {
-    flex-direction: column-reverse;
-    justify-content: flex-end;
-    padding: clamp(80px, 14vmin, 110px) clamp(20px, 5vw, 48px) clamp(80px, 14vmin, 110px);
-    gap: clamp(12px, 2vmin, 24px);
-    overflow-y: auto;
+/* ── Back button — icon only ── */
+.char-back-btn {
+  --btn-size: clamp(44px, 7vmin, 72px);
+  position: absolute;
+  top: clamp(16px, 2.5vmin, 28px);
+  left: clamp(16px, 2.5vw, 36px);
+  width: var(--btn-size);
+  height: var(--btn-size);
+  background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.char-back-btn:hover,
+.char-back-btn:focus-visible {
+  transform: scale(1.08);
+  filter: drop-shadow(0 3px 10px rgba(0,0,0,0.6)) brightness(1.12);
+  outline: none;
+}
+
+.char-back-btn:active {
+  transform: scale(0.96);
+  filter: brightness(0.85);
+}
+
+.char-back-arrow {
+  width: 45%;
+  height: 45%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Landscape — Figma stage (16:9), centered in the viewport.
+   Per-character rules below only set landscape art/text slots.
+   ═══════════════════════════════════════════════════════════ */
+@media (min-aspect-ratio: 1/1) {
+  /* Heights follow the 1920-wide artwork scaled to the stage; stretching
+     (instead of tiling) keeps wider-than-16:9 screens free of visible seams. */
+  .char-border {
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
   }
 
-  .char-art {
-    width: 100%;
-    height: clamp(180px, 48vw, 320px);
-    flex-shrink: 0;
+  .char-border-top    { height: var(--bt); }
+  .char-border-bottom { height: var(--bb); }
+
+  .char-viewer {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: var(--stage-w);
+    height: var(--stage-h);
+    container-type: inline-size;
+  }
+
+  .char-art,
+  .char-text {
+    position: absolute;
+  }
+
+  /* Art wrappers only matter in portrait; here the slots position against the stage */
+  .char-art-area,
+  .char-art-row {
+    display: contents;
+  }
+
+  .char-name {
+    font-size: clamp(3.5rem, 8.5cqw, 8rem);
+    margin-bottom: clamp(6px, 1cqw, 14px);
+  }
+
+  .char-description {
+    font-size: clamp(1.05rem, 2cqw, 1.6rem);
+    line-height: 1.45;
+  }
+
+  /* ── Pagination ── */
+  .char-nav {
+    --arrow: calc(var(--u) * 2);
+    position: absolute;
+    top: 86%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: calc(var(--u) * 1.1);
+  }
+
+  .char-dots {
+    gap: calc(var(--u) * 0.35);
+  }
+
+  .char-dot {
+    width: calc(var(--u) * 0.45);
+    aspect-ratio: 1;
+  }
+
+  .char-dot.is-active {
+    width: calc(var(--u) * 0.65);
+  }
+
+  .char-nav-btn {
+    width: max(var(--arrow), 40px);
+    height: max(var(--arrow), 40px);
+  }
+
+  /* ── text-left (default, Bulan): text left, art grouped right ── */
+  [data-layout="text-left"] .char-text {
+    left: 7.8%;
+    top: 48%;
+    transform: translateY(-50%);
+    width: 25%;
+  }
+
+  [data-layout="text-left"] .char-art-face {
+    left: 33%;
+    top: 13%;
+    width: 28%;
+    height: 71%;
+  }
+
+  [data-layout="text-left"] .char-art-body {
+    left: 58%;
+    top: 13%;
+    width: 38%;
+    height: 71%;
+  }
+
+  /* ── text-right (Apung Mallari): art left-center, text right ── */
+  [data-layout="text-right"] .char-text {
+    left: 63.5%;
+    top: 30.5%;
+    width: 27%;
+  }
+
+  [data-layout="text-right"] .char-name {
+    font-size: clamp(2.5rem, 6.5cqw, 8rem);
+    white-space: nowrap;
+    line-height: 1;
+    margin-bottom: 0.68cqw;
+  }
+
+  [data-layout="text-right"] .char-description {
+    line-height: 1.1;
+    width: 26cqw;
+  }
+
+  [data-layout="text-right"] .char-art-body {
+    left: 35.9%;
+    top: 11.2%;
+    width: 22.5%;
+    height: 72.6%;
+  }
+
+  [data-layout="text-right"] .char-art-face {
+    left: 2.5%;
+    top: 21%;
+    width: 33%;
+    height: 50%;
+  }
+
+  [data-layout="text-right"] .char-art-extra {
+    left: 15.1%;
+    top: 64.5%;
+    width: 10.9%;
+    height: 20.6%;
+  }
+
+  /* ── indung (Indung Tibuan): big croc center-bottom, water croc top-left, text top-right ── */
+  [data-layout="indung"] .char-text {
+    left: 62%;
+    top: 14.5%;
+    width: 30%;
+  }
+
+  [data-layout="indung"] .char-name {
+    font-size: clamp(2.5rem, 6.8cqw, 8rem);
+    white-space: nowrap;
+    line-height: 1;
+    margin-bottom: 1.07cqw;
+  }
+
+  [data-layout="indung"] .char-description {
+    line-height: 1.15;
+    width: 29cqw;
+  }
+
+  [data-layout="indung"] .char-art-body {
+    left: 14.5%;
+    top: 31%;
+    width: 75%;
+    height: 51%;
+  }
+
+  [data-layout="indung"] .char-art-face {
+    left: 9.5%;
+    top: 17.2%;
+    width: 35.6%;
+    height: 21%;
+  }
+
+  /* ── batala (Apung Batala): two birds left/center, text right ── */
+  [data-layout="batala"] .char-text {
+    left: 72.5%;
+    top: 34%;
+    width: 24%;
+  }
+
+  [data-layout="batala"] .char-name {
+    white-space: nowrap;
+    line-height: 1;
+    font-size: clamp(2.5rem, 5.2cqw, 6rem);
+    margin-bottom: 0.84cqw;
+  }
+
+  [data-layout="batala"] .char-description {
+    font-size: clamp(0.9rem, 1.25cqw, 1.6rem);
+    line-height: 1.15;
+    width: 24cqw;
+  }
+
+  [data-layout="batala"] .char-art-face {
+    left: 12%;
+    top: 15%;
+    width: 20.5%;
+    height: 68%;
+  }
+
+  [data-layout="batala"] .char-art-body {
+    left: 33%;
+    top: 14.5%;
+    width: 34%;
+    height: 69%;
+  }
+
+  /* ── mangacha (Apung Mangacha): whole spider center, head right, text bottom-left ── */
+  [data-layout="mangacha"] .char-text {
+    left: 5.4%;
+    top: 66.9%;
+    width: 32%;
+    z-index: 3;
+  }
+
+  [data-layout="mangacha"] .char-name {
+    white-space: nowrap;
+    line-height: 1;
+    margin-bottom: 0.84cqw;
+  }
+
+  [data-layout="mangacha"] .char-description {
+    font-size: clamp(0.9rem, 1.33cqw, 1.6rem);
+    line-height: 1.15;
+    width: 31.5cqw;
+  }
+
+  [data-layout="mangacha"] .char-art-body {
+    left: 27.8%;
+    top: 10.1%;
+    width: 43.6%;
+    height: 65%;
+  }
+
+  [data-layout="mangacha"] .char-art-face {
+    left: 78.9%;
+    top: 34.3%;
+    width: 13.2%;
+    height: 29.6%;
+  }
+
+  /* ── sinukuan (Apung Sinukuan): full body left, head center, text right ── */
+  [data-layout="sinukuan"] .char-text {
+    left: 69.5%;
+    top: 27.4%;
+    width: 26%;
+  }
+
+  [data-layout="sinukuan"] .char-name {
+    white-space: nowrap;
+    line-height: 1;
+    font-size: clamp(2.5rem, 4.5cqw, 6rem);
+    margin-bottom: 0.84cqw;
+  }
+
+  [data-layout="sinukuan"] .char-description {
+    font-size: clamp(0.9rem, 1.15cqw, 1.6rem);
+    line-height: 1.15;
+    width: 18cqw;
+  }
+
+  [data-layout="sinukuan"] .char-art-body {
+    left: 11.7%;
+    top: 11.8%;
+    width: 23.4%;
+    height: 73.6%;
+  }
+
+  [data-layout="sinukuan"] .char-art-face {
+    left: 42.5%;
+    top: 9.5%;
+    width: 21%;
+    height: 72%;
+  }
+
+  /* ── aldo / namalyari: text left, soul alone in the center ── */
+  [data-layout="aldo"] .char-text,
+  [data-layout="namalyari"] .char-text {
+    left: 7.8%;
+    top: 48%;
+    transform: translateY(-50%);
+    width: 25%;
+  }
+
+  [data-layout="aldo"] .char-art-body {
+    left: 33.8%;
+    top: 15.4%;
+    width: 35.9%;
+    height: 64.5%;
+  }
+
+  [data-layout="namalyari"] .char-art-body {
+    left: 36.3%;
+    top: 19.5%;
+    width: 31%;
+    height: 56%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4:3 to 16:10 landscape (iPad, small laptops) — the stage is
+   shorter than the viewport. Fit it between the two borders and
+   position the back button / pagination against the viewport.
+   ═══════════════════════════════════════════════════════════ */
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 7/4) {
+  .screen-characters {
+    /* stage + both borders must fit inside the viewport height */
+    --stage-w: min(100vw, calc(100dvh / 0.67865));
+  }
+
+  .char-viewer {
+    inset: var(--bt) 0 var(--bb) 0;
+  }
+
+  .char-back-btn {
+    top: calc(var(--bt) + 1.5dvh);
+    left: max(5vw, 16px);
   }
 
   .char-nav {
-    bottom: clamp(12px, 2vmin, 24px);
-    gap: clamp(32px, 8vw, 80px);
+    top: auto;
+    bottom: calc(var(--bb) + 1.5dvh);
+    transform: translateX(-50%);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Portrait — stacked layout, all in normal flow:
+   [back] / [art: primary, then secondary row] / [text] / [pagination]
+   The page scrolls vertically if the content is taller than the screen.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-aspect-ratio: 1/1) {
+  .screen-characters.active {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-top: calc(var(--char-border-h) + env(safe-area-inset-top));
+    padding-bottom: calc(var(--char-border-h) + env(safe-area-inset-bottom));
+  }
+
+  /* Borders stay pinned to the viewport while the content scrolls */
+  .char-border {
+    position: fixed;
+    height: var(--char-border-h);
+  }
+
+  /* Header row: the back button, in flow */
+  .char-back-btn {
+    --btn-size: clamp(44px, 12vw, 60px);
+    position: static;
+    order: -1;
+    flex: none;
+    align-self: flex-start;
+    margin: 4px 0 0 max(16px, env(safe-area-inset-left));
+  }
+
+  .char-viewer {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+    display: grid;
+    grid-template-rows: minmax(30dvh, 1fr) auto;
+  }
+
+  /* Art area: a size container; every piece is sized from it */
+  .char-art-area {
+    --max-w: min(44cqw, 360px);   /* two pieces side by side */
+    grid-row: 1;
+    container-type: size;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4cqw;
+    min-height: 0;
+  }
+
+  .char-art-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4cqw;
+  }
+
+  .char-art {
+    --ar: 1;
+    --share: 20;
+    flex: none;
+    width: min(var(--max-w, 92cqw), calc(var(--share) * 1cqh * var(--ar)));
+    aspect-ratio: var(--ar);
+  }
+
+  /* Art slot values per character: aspect ratio of the real PNG, and
+     max height as a % of the art area. Body = primary, face = secondary. */
+  .char-viewer {
+    --body-ar: 0.809; --body-share: 74;   /* Bulan: Right Bulan.png */
+    --face-ar: 0.904; --face-share: 66;   /*        Left Bulan.png  */
+  }
+
+  .char-art-body { --ar: var(--body-ar); --share: var(--body-share); }
+  .char-art-face { --ar: var(--face-ar); --share: var(--face-share); }
+
+  [data-layout="text-right"] {            /* Apung Mallari (side by side) */
+    --body-ar: 0.555; --body-share: 70;
+    --face-ar: 0.555; --face-share: 60;
+  }
+
+  [data-layout="indung"] {                /* Indung Tibuan */
+    --body-ar: 2.515; --body-share: 46;
+    --face-ar: 3.167; --face-share: 30;
+  }
+
+  [data-layout="batala"] {                /* Apung Batala (side by side) */
+    --body-ar: 0.836; --body-share: 60;
+    --face-ar: 0.518; --face-share: 66;
+  }
+
+  [data-layout="mangacha"] {              /* Apung Mangacha */
+    --body-ar: 1.195; --body-share: 56;
+    --face-ar: 0.805; --face-share: 32;
+  }
+
+  [data-layout="sinukuan"] {              /* Apung Sinukuan (side by side) */
+    --body-ar: 0.574; --body-share: 70;
+    --face-ar: 0.516; --face-share: 66;
+  }
+
+  [data-layout="aldo"],
+  [data-layout="namalyari"] {             /* soul only */
+    --body-ar: 1.003; --body-share: 72;
+  }
+
+  /* Bulan: side by side, slightly larger and overlapping a little */
+  [data-layout="text-left"] .char-art-area {
+    --max-w: min(48cqw, 380px);
+  }
+
+  [data-layout="text-left"] .char-art-row {
+    margin-left: -8cqw;
+  }
+
+  /* Wide art (crocodiles, spider): stacked, so each piece can use the full width */
+  [data-layout="indung"] .char-art-area,
+  [data-layout="mangacha"] .char-art-area {
+    --max-w: min(92cqw, 640px);
+    flex-direction: column;
+    gap: 0;
+  }
+
+  [data-layout="indung"] .char-art-row,
+  [data-layout="mangacha"] .char-art-row {
+    margin-top: 3cqh;
+  }
+
+  /* Single piece: allow it to use the full width */
+  [data-layout="aldo"] .char-art-area,
+  [data-layout="namalyari"] .char-art-area {
+    --max-w: min(92cqw, 640px);
+  }
+
+  @supports not (container-type: size) {
+    .char-art {
+      width: min(92vw, calc(var(--share) * 0.5dvh * var(--ar)));
+    }
+  }
+
+  /* Text */
+  .char-text {
+    grid-row: 2;
+    width: min(92%, 38rem);
+    margin-inline: auto;
+    padding-top: 2.5dvh;
+    text-align: center;
+  }
+
+  .char-name {
+    font-size: clamp(1.75rem, 7.5vw, 3.5rem);
+    line-height: 1;
+    text-wrap: balance;
+    margin-bottom: 0.5rem;
+  }
+
+  .char-description {
+    font-size: clamp(0.95rem, 3.6vw, 1.4rem);
+    line-height: 1.3;
+    text-wrap: pretty;
+  }
+
+  .char-description p + p {
+    margin-top: 0.6em;
+  }
+
+  /* Pagination, in flow below the text */
+  .char-nav {
+    --arrow: clamp(20px, 5.5vw, 28px);
+    order: 1;
+    flex: none;
+    align-self: center;
+    justify-content: center;
+    max-width: 90%;
+    margin: 4px 0 12px;
+  }
+
+  .char-nav-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .char-dot {
+    --dot: clamp(7px, 1.9vw, 10px);
+    width: 24px;
+    height: 24px;
+    background-size: var(--dot) auto;
+  }
+
+  .char-dot.is-active {
+    --dot: clamp(10px, 2.8vw, 15px);
   }
 }

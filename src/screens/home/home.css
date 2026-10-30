@@ -48,41 +48,35 @@
 /* ── Title block ── */
 .home-title-block {
   position: absolute;
-  top: 50%;
   left: 50%;
-  transform: translate(-50%, -72%);
-  text-align: center;
-  width: 80%;
+  bottom: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   pointer-events: none;
   user-select: none;
 }
 
-.home-title {
-  font-family: var(--font-tribal);
-  font-size: clamp(2.8rem, 8.5vmin, 7rem);
-  line-height: 1.05;
-  color: var(--color-gold);
-  text-shadow:
-    0 0 30px rgba(232,200,74,0.55),
-    0 2px 12px rgba(0,0,0,0.75),
-    2px 2px 0 rgba(0,0,0,0.4);
-  letter-spacing: 0.02em;
+.home-title-img {
+  width: clamp(280px, 40vw, 720px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
 }
 
-.home-tagline {
-  font-family: var(--font-mclaren);
-  font-size: clamp(0.7rem, 1.8vmin, 1.25rem);
-  color: var(--color-white);
-  letter-spacing: 0.14em;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.8);
-  margin-top: clamp(6px, 1.2vmin, 14px);
-  text-transform: uppercase;
+.home-tagline-img {
+  width: clamp(180px, 26vw, 480px);
+  height: auto;
+  display: block;
+  margin-top: clamp(2px, 0.5vmin, 8px);
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
 }
 
 /* ── Menu ── */
 .home-menu {
   position: absolute;
-  bottom: 24%;
+  top: 56%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -175,7 +169,15 @@ span.home-settings-btn-img img {
 /* ── Portrait adjustments ── */
 @media (orientation: portrait) {
   .home-menu {
-    bottom: 16%;
+    top: 62%;
+  }
+
+  .home-title-img {
+    width: clamp(220px, 55vw, 480px);
+  }
+
+  .home-tagline-img {
+    width: clamp(160px, 42vw, 360px);
   }
 
   .home-settings-btn {

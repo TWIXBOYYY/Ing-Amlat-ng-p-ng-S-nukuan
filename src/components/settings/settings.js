@@ -57,8 +57,6 @@ function buildRow({ key, label }) {
     <div class="settings-row${muted ? ' row-muted' : ''}" data-channel="${key}">
       <span class="settings-row-label">${label}</span>
       <div class="settings-slider-wrap" style="--val:${pct}">
-        <div class="settings-slider-track"></div>
-        <div class="settings-slider-fill"></div>
         <input
           type="range" class="settings-slider"
           min="0" max="100" value="${pct}" step="1"
@@ -81,7 +79,7 @@ export function createSettingsOverlay() {
   _overlay.setAttribute('aria-hidden', 'true');
 
   _overlay.innerHTML = `
-    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Audio settings">
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Audio settings" tabindex="-1">
       ${SUN_DECO}
       <div class="settings-sliders">
         ${CHANNELS.map(buildRow).join('')}
@@ -139,6 +137,13 @@ export function createSettingsOverlay() {
   return _overlay;
 }
 
+/** Keep aria-expanded on the hamburger / settings buttons in step with the panel. */
+function setTriggersExpanded(expanded) {
+  document.querySelectorAll('[aria-label="Open audio settings"]').forEach((btn) => {
+    btn.setAttribute('aria-expanded', String(expanded));
+  });
+}
+
 export function toggleSettings() {
   if (_overlay && _overlay.classList.contains('open')) hideSettings();
   else showSettings();
@@ -149,6 +154,7 @@ export function showSettings() {
   _previousFocus = document.activeElement;
   _overlay.classList.add('open');
   _overlay.removeAttribute('aria-hidden');
+  setTriggersExpanded(true);
   _overlay.querySelector('.settings-panel')?.focus();
 }
 
@@ -156,6 +162,7 @@ export function hideSettings() {
   if (!_overlay) return;
   _overlay.classList.remove('open');
   _overlay.setAttribute('aria-hidden', 'true');
+  setTriggersExpanded(false);
   if (_previousFocus) { _previousFocus.focus(); _previousFocus = null; }
   // Re-trigger HUD idle timer now that panel is closed
   document.dispatchEvent(new CustomEvent('settings:closed'));

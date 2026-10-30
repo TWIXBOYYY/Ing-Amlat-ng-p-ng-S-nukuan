@@ -76,7 +76,7 @@ export function createReaderScreen() {
         </div>
         <div class="reader-hud-right">
           <!-- Settings -->
-          <button class="reader-hud-img-btn" id="reader-settings-btn" aria-label="Open audio settings">
+          <button class="reader-hud-img-btn" id="reader-settings-btn" aria-label="Open audio settings" aria-expanded="false">
             <span class="reader-hud-btn-img" aria-hidden="true">
               <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
               <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
@@ -156,7 +156,7 @@ export function mountReader(el) {
     nextBtn.addEventListener('click', () => {
       if (currentIndex >= pages.length - 1) {
         stopAutoplay(el);
-        navigate('#minigame');
+        navigate('#minigame-loading');
       } else {
         goTo(currentIndex + 1, 'next', el);
       }
