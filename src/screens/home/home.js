@@ -22,7 +22,7 @@ export function createHomeScreen() {
 
     <!-- Title -->
     <div class="home-title-block" aria-label="Ing Amlat ng Ápûng Sinukuan">
-      <img src="/assets/ui/Homepage Text.png" class="home-title-img" alt="Ing Amlat ng Ápûng Sinukuan" draggable="false"/>
+      <img src="/assets/ui/Homepage Text .png" class="home-title-img" alt="Ing Amlat ng Ápûng Sinukuan" draggable="false"/>
       <img src="/assets/ui/A World Woven, A Legacy Awakened.png" class="home-tagline-img" alt="A World Woven, A Legacy Awakened" draggable="false"/>
     </div>
 

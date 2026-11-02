@@ -19,6 +19,9 @@ export function createLoadingScreen() {
     </div>
   `;
 
+  // Start fetching the night background while the splash is still showing
+  new Image().src = '/assets/ui/MT.ALAYA_DAY__NIGHT.webp';
+
   return el;
 }
 

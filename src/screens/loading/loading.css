@@ -1,5 +1,5 @@
 .screen-loading {
-  background: var(--color-bg-loading);
+  background: url('/assets/ui/MT.ALAYA_DAY__NIGHT.webp') center/cover no-repeat var(--color-bg-loading);
   /* display: flex applied by global.css when .active is present */
   flex-direction: column;
   align-items: center;

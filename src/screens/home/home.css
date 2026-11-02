@@ -1,5 +1,5 @@
 .screen-home {
-  background: url('/assets/ui/Mt.Alaya.png') center/cover no-repeat #1e2530;
+  background: url('/assets/ui/MT.ALAYA_DAY.webp') center/cover no-repeat #1e2530;
   overflow: hidden;
 }
 
@@ -12,7 +12,7 @@
   will-change: transform;
 }
 
-/* Sky gradient — hidden now that Mt.Alaya.png is the background */
+/* Sky gradient — hidden now that MT.ALAYA_DAY is the background */
 .home-sky { display: none; }
 
 /* Cloud layers */
@@ -39,7 +39,7 @@
     rgba(200,210,220,0.45) 0%, transparent 70%);
 }
 
-/* Placeholder mountains and ground — hidden now that Mt.Alaya.png is the background */
+/* Placeholder mountains and ground — hidden now that MT.ALAYA_DAY is the background */
 .home-mountain-bg,
 .home-mountain-mid-l,
 .home-mountain-mid-r,
