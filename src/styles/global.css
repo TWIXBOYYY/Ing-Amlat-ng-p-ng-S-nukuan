@@ -57,6 +57,25 @@ button {
   display: block;
 }
 
+/* Layered parallax background (utils/parallax-bg.js) */
+.screen:has(> .px-stack) { isolation: isolate; }
+
+.px-stack {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.px-layer {
+  position: absolute;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
 /* Screens whose own CSS uses display:flex — restore it when active */
 .screen-splash.active,
 .screen-loading.active,

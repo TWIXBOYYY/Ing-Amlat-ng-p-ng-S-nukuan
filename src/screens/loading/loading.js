@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
+import { addParallaxLayers, startParallax } from '../../utils/parallax-bg.js';
 
 
 export function createLoadingScreen() {
@@ -19,14 +20,19 @@ export function createLoadingScreen() {
     </div>
   `;
 
-  // Start fetching the night background while the splash is still showing
-  new Image().src = '/assets/ui/MT.ALAYA_DAY__NIGHT.webp';
+  // Starts fetching the night background while the splash is still showing
+  addParallaxLayers(el, [{ src: '/assets/ui/MT.ALAYA_DAY__NIGHT.webp', depth: 0.35, y: 1.6 }]);
+  // The home screen's layers load while the loading screen plays
+  ['bg', 'clouds', 'ayala', 'ground'].forEach(n => { new Image().src = `/assets/ui/layer-${n}.webp`; });
 
   return el;
 }
 
 /** @param {HTMLElement} el */
 export function mountLoading(el) {
+  el._stopParallax?.();
+  el._stopParallax = startParallax(el);
+
   const label    = el.querySelector('.loading-label');
   const bar      = el.querySelector('.loading-progress-bar');
   const fill     = el.querySelector('.loading-progress-fill');
