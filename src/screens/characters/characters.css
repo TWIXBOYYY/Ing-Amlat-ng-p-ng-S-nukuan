@@ -75,8 +75,8 @@
   font-family: var(--font-tribal);
   font-weight: 400;
   color: #1a1a1a;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
+  letter-spacing: 0.01em;
+  line-height: 1;
 }
 
 .char-description {
@@ -89,7 +89,7 @@
 }
 
 .char-description p + p {
-  margin-top: 1.15em;
+  margin-top: 0.75em;
 }
 
 /* ── Pagination ── */
@@ -152,12 +152,54 @@
   pointer-events: none;
 }
 
-.char-nav-flip {
-  transform: scaleX(-1);
+.char-nav-btn {
+  color: var(--color-gold-dark);
+}
+
+/* Desktop: the arrows fade in when the pointer is over the pagination (dots stay visible).
+   Touch screens and keyboards always see them. */
+@media (hover: hover) and (pointer: fine) {
+  .char-nav {
+    padding: calc(var(--u, 1vw) * 0.8) calc(var(--u, 1vw) * 1.5);
+  }
+
+  .char-nav-btn {
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.15s, filter 0.15s;
+  }
+
+  .char-nav:hover .char-nav-btn:not(:disabled),
+  .char-nav:focus-within .char-nav-btn:not(:disabled) {
+    opacity: 1;
+  }
+
+  .char-nav:hover .char-nav-btn:disabled,
+  .char-nav:focus-within .char-nav-btn:disabled {
+    opacity: 0.25;
+  }
+}
+
+/* ── Idle motion: a slow float + breathe on every piece of art ── */
+@media (prefers-reduced-motion: no-preference) {
+  .char-art-img {
+    transform-origin: 50% 100%;
+    animation: char-idle 5.2s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .char-art-face .char-art-img  { animation-duration: 4.4s; animation-delay: -1.3s; }
+  .char-art-extra .char-art-img { animation-duration: 6.1s; animation-delay: -2.6s; }
+}
+
+@keyframes char-idle {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  35%      { transform: translateY(-1.1%) rotate(0.45deg) scale(1.01); }
+  70%      { transform: translateY(-0.4%) rotate(-0.4deg) scale(1.006); }
 }
 
 /* ── Back button — icon only ── */
 .char-back-btn {
+  color: #fff;
   --btn-size: clamp(44px, 7vmin, 72px);
   position: absolute;
   top: clamp(16px, 2.5vmin, 28px);
@@ -189,11 +231,8 @@
 }
 
 .char-back-arrow {
-  width: 45%;
-  height: 45%;
-  object-fit: contain;
-  display: block;
-  pointer-events: none;
+  width: 40%;
+  height: 40%;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -238,12 +277,13 @@
 
   .char-description {
     font-size: clamp(1.05rem, 2cqw, 1.6rem);
-    line-height: 1.45;
+    line-height: 1.35;
+    letter-spacing: -0.005em;
   }
 
   /* ── Pagination ── */
   .char-nav {
-    --arrow: calc(var(--u) * 2);
+    --arrow: calc(var(--u) * 1.5);
     position: absolute;
     top: 86%;
     left: 50%;
@@ -687,7 +727,7 @@
 
   /* Pagination, in flow below the text */
   .char-nav {
-    --arrow: clamp(20px, 5.5vw, 28px);
+    --arrow: clamp(16px, 4.5vw, 22px);
     order: 1;
     flex: none;
     align-self: center;

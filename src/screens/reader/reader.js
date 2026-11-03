@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { AudioManager } from '../../audio/AudioManager.js';
+import { icon } from '../../components/icons.js';
 import { toggleSettings } from '../../components/settings/settings.js';
 import { pages } from '../../data/story.js';
 
@@ -63,7 +64,7 @@ export function createReaderScreen() {
         <div class="reader-hud-left">
           <!-- Home -->
           <button class="reader-hud-img-btn" id="reader-home-btn" aria-label="Return to home">
-            <img src="/assets/ui/Vector.png" class="reader-hud-btn-img" alt="" aria-hidden="true" draggable="false"/>
+            ${icon('arrow-left', 'reader-hud-btn-img')}
           </button>
           <!-- Restart -->
           <button class="reader-hud-img-btn reader-hud-restart-btn" id="reader-restart-btn" aria-label="Restart from page 1">
@@ -71,17 +72,13 @@ export function createReaderScreen() {
           </button>
           <!-- Autoplay -->
           <button class="reader-hud-img-btn" id="reader-autoplay-btn" aria-label="Toggle autoplay" aria-pressed="false">
-            <img src="/assets/ui/Layer 6.png" class="reader-hud-btn-img" alt="" aria-hidden="true" draggable="false"/>
+            ${icon('circle-play', 'reader-hud-btn-img')}
           </button>
         </div>
         <div class="reader-hud-right">
           <!-- Settings -->
           <button class="reader-hud-img-btn" id="reader-settings-btn" aria-label="Open audio settings" aria-expanded="false">
-            <span class="reader-hud-btn-img" aria-hidden="true">
-              <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
-              <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
-              <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
-            </span>
+            ${icon('menu', 'reader-hud-btn-img')}
           </button>
         </div>
       </div>
@@ -89,14 +86,14 @@ export function createReaderScreen() {
       <!-- Prev arrow -->
       <div class="reader-nav reader-nav-prev">
         <button class="reader-nav-btn" id="reader-prev-btn" aria-label="Previous page">
-          <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img nav-arrow-flip" alt="" aria-hidden="true" draggable="false"/>
+          ${icon('chevron-left', 'nav-arrow-img')}
         </button>
       </div>
 
       <!-- Next arrow -->
       <div class="reader-nav reader-nav-next">
         <button class="reader-nav-btn" id="reader-next-btn" aria-label="Next page">
-          <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img" alt="" aria-hidden="true" draggable="false"/>
+          ${icon('chevron-right', 'nav-arrow-img')}
         </button>
       </div>
 
@@ -349,12 +346,20 @@ function startAutoplay(el) {
     }
     goTo(currentIndex + 1, 'next', el);
   }, AUTOPLAY_INTERVAL_MS);
-  el.querySelector('#reader-autoplay-btn')?.classList.add('autoplay-active');
+  setAutoplayState(el, true);
 }
 
 function stopAutoplay(el) {
   if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-  el?.querySelector('#reader-autoplay-btn')?.classList.remove('autoplay-active');
+  setAutoplayState(el, false);
+}
+
+/** Gold glow + play/pause icon on the autoplay button. */
+function setAutoplayState(el, on) {
+  const btn = el?.querySelector('#reader-autoplay-btn');
+  if (!btn) return;
+  btn.classList.toggle('autoplay-active', on);
+  btn.innerHTML = icon(on ? 'circle-pause' : 'circle-play', 'reader-hud-btn-img');
 }
 
 function preloadAhead(idx) {

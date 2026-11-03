@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
+import { icon } from '../../components/icons.js';
 
 /**
  * Edit this data to update credits without touching layout code.
@@ -57,7 +58,7 @@ export function createCreditsScreen() {
     <div class="credits-grid">${sectionsHTML}</div>
     <p class="credits-footer">Dakal a Salamat!</p>
     <button class="screen-back-btn" aria-label="Go back to home">
-      <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img nav-arrow-flip" alt="" aria-hidden="true" draggable="false"/>
+      ${icon('chevron-left', 'nav-arrow-img')}
       <span class="screen-back-label">Back</span>
     </button>
   `;

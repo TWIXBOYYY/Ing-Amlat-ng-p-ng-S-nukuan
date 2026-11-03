@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
+import { icon } from '../../components/icons.js';
 import { wireInput } from './minigame-input.js';
 
 const ART = '/assets/characters ui';
@@ -67,7 +68,7 @@ function buildGame(el) {
   el.innerHTML = `
     <div class="mg-board">
       <button class="mg-home-btn" aria-label="Go back to home">
-        <img src="/assets/ui/Vector.png" class="mg-home-arrow" draggable="false" alt=""/>
+        ${icon('arrow-left', 'mg-home-arrow')}
       </button>
       <div class="mg-title-wrap">
         <h1 class="mg-title">WHO IS WHO</h1>

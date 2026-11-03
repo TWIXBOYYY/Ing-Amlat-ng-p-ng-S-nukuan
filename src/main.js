@@ -67,7 +67,7 @@ function bootstrap() {
   registerScreen('#splash',  { mount: (el) => mountSplash(el) });
   registerScreen('#loading', { mount: (el) => mountLoading(el), unmount: (el) => { el._stopParallax?.(); el._stopParallax = null; } });
   registerScreen('#home',    { mount: (el) => mountHome(el),   unmount: (el) => unmountHome(el) });
-  registerScreen('#about',   { mount: (el) => mountAbout(el)  });
+  registerScreen('#about',   { mount: (el) => mountAbout(el) });
   registerScreen('#credits', { mount: (el) => mountCredits(el) });
   registerScreen('#reader',  { mount: (el) => mountReader(el), unmount: (el) => unmountReader(el) });
   registerScreen('#characters', { mount: (el) => mountCharacters(el) });

@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
+import { icon } from '../../components/icons.js';
 
 const CHARACTERS = [
   {
@@ -109,23 +110,22 @@ export function createCharactersScreen() {
 
     <div class="char-nav">
       <button class="char-nav-btn char-prev-btn" aria-label="Previous character" disabled>
-        <img src="/assets/ui/NEXT BUTTON.png" class="char-nav-img char-nav-flip" alt="" aria-hidden="true" draggable="false"/>
+        ${icon('chevron-left', 'char-nav-img')}
       </button>
       <div class="char-dots">
         ${CHARACTERS.map((_, i) => `<button class="char-dot${i === 0 ? ' is-active' : ''}" aria-label="Go to character ${i + 1}"></button>`).join('')}
       </div>
       <button class="char-nav-btn char-next-btn" aria-label="Next character">
-        <img src="/assets/ui/NEXT BUTTON.png" class="char-nav-img" alt="" aria-hidden="true" draggable="false"/>
+        ${icon('chevron-right', 'char-nav-img')}
       </button>
     </div>
 
     <button class="char-back-btn" aria-label="Go back to home">
-      <img src="/assets/ui/Vector.png" class="char-back-arrow" alt="" aria-hidden="true" draggable="false"/>
+      ${icon('arrow-left', 'char-back-arrow')}
     </button>
   `;
 
   setDescription(el.querySelector('.char-description'), first.description);
-
   return el;
 }
 
