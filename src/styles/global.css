@@ -123,8 +123,8 @@ button {
 }
 
 .screen-back-btn .nav-arrow-img {
-  width: calc(var(--back-h) * 0.34);
-  height: calc(var(--back-h) * 0.34);
+  width: calc(var(--back-h) * 0.48);
+  height: calc(var(--back-h) * 0.48);
   flex-shrink: 0;
 }
 
@@ -147,6 +147,10 @@ button {
   display: block;
   pointer-events: none;
   user-select: none;
+}
+
+.nav-arrow-flip {
+  transform: scaleX(-1);
 }
 
 /* Lucide icons (components/icons.js): colour comes from `color`, size from the container */

@@ -86,14 +86,14 @@ export function createReaderScreen() {
       <!-- Prev arrow -->
       <div class="reader-nav reader-nav-prev">
         <button class="reader-nav-btn" id="reader-prev-btn" aria-label="Previous page">
-          ${icon('chevron-left', 'nav-arrow-img')}
+          <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img nav-arrow-flip" alt="" aria-hidden="true" draggable="false"/>
         </button>
       </div>
 
       <!-- Next arrow -->
       <div class="reader-nav reader-nav-next">
         <button class="reader-nav-btn" id="reader-next-btn" aria-label="Next page">
-          ${icon('chevron-right', 'nav-arrow-img')}
+          <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img" alt="" aria-hidden="true" draggable="false"/>
         </button>
       </div>
 

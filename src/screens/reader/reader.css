@@ -215,9 +215,8 @@ span.reader-hud-btn-img img {
 .reader-nav-next { right: clamp(4px, 1vw, 16px); }
 
 .reader-nav-btn {
-  color: #fff;
-  width: clamp(44px, 5.5vmin, 64px);
-  height: clamp(44px, 5.5vmin, 64px);
+  width: clamp(64px, 9vmin, 120px);
+  height: clamp(64px, 9vmin, 120px);
   background: none;
   border: none;
   padding: 0;
@@ -311,8 +310,8 @@ span.reader-hud-btn-img img {
   }
 
   .reader-nav-btn {
-    width: clamp(44px, 7vmin, 56px);
-    height: clamp(44px, 7vmin, 56px);
+    width: clamp(52px, 8vmin, 100px);
+    height: clamp(52px, 8vmin, 100px);
   }
 
   .reader-hud-top {

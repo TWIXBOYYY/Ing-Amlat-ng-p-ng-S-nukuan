@@ -152,8 +152,8 @@
   pointer-events: none;
 }
 
-.char-nav-btn {
-  color: var(--color-gold-dark);
+.char-nav-flip {
+  transform: scaleX(-1);
 }
 
 /* Desktop: the arrows fade in when the pointer is over the pagination (dots stay visible).
@@ -283,7 +283,7 @@
 
   /* ── Pagination ── */
   .char-nav {
-    --arrow: calc(var(--u) * 1.5);
+    --arrow: calc(var(--u) * 2);
     position: absolute;
     top: 86%;
     left: 50%;
@@ -727,7 +727,7 @@
 
   /* Pagination, in flow below the text */
   .char-nav {
-    --arrow: clamp(16px, 4.5vw, 22px);
+    --arrow: clamp(20px, 5.5vw, 28px);
     order: 1;
     flex: none;
     align-self: center;
