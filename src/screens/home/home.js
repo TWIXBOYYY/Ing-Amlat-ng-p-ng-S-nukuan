@@ -1,7 +1,6 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { AudioManager } from '../../audio/AudioManager.js';
-import { icon } from '../../components/icons.js';
 import { showSettings } from '../../components/settings/settings.js';
 import { addParallaxLayers, startParallax } from '../../utils/parallax-bg.js';
 
@@ -37,7 +36,11 @@ export function createHomeScreen() {
 
     <!-- Settings button -->
     <button class="home-settings-btn" aria-label="Open audio settings" aria-expanded="false">
-      ${icon('menu', 'home-settings-btn-img')}
+      <span class="home-settings-btn-img" aria-hidden="true">
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+      </span>
     </button>
 
     <!-- Continue reading (hidden until saved progress exists) -->

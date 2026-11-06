@@ -1,14 +1,17 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { AudioManager } from '../../audio/AudioManager.js';
-import { icon } from '../../components/icons.js';
 import { toggleSettings } from '../../components/settings/settings.js';
 import { pages } from '../../data/story.js';
 
-const STORAGE_KEY = 'sinukuan_last_page';
 const PRELOAD_AHEAD = 2;
 
 const AUTOPLAY_INTERVAL_MS = 6000;
+const HUD_IDLE_MS = 2500;
+const VIDEO_START_FALLBACK_MS = 900;
+const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/Turn a page.mp3');
+const VIDEO_END_SNAP_S = 1.5;
+const LANDSCAPE = '(orientation: landscape) and (min-width: 521px)';
 
 /** Build a placeholder page for when the real image isn't available yet. */
 function placeholderPage(page, index) {
@@ -25,6 +28,24 @@ function buildPageEl(page, index) {
   el.className = 'reader-page';
   el.dataset.pageId = page.id;
   el.dataset.index  = index;
+
+  // A page that turns itself holds its last frame; a looping video would jump back to the start (and the
+  // caption boxes with it) just before the page turns.
+  if (page.video) {
+    el.classList.add('reader-page--video');
+    el.innerHTML = `
+      <div class="reader-page-media">
+        <video class="reader-page-video" src="${encodeURI(page.video)}" muted ${page.advanceAfter == null ? 'loop' : ''} playsinline
+               preload="${index === 0 ? 'auto' : 'metadata'}" aria-label="${page.alt || `Page ${index + 1}`}"></video>
+        <div class="reader-caption-frame">
+          ${(page.captions || []).map(c => `
+            <div class="reader-caption" data-at-x="${c.at.x}" data-at-y="${c.at.y}">
+              <img class="reader-page-caption" src="${encodeURI(c.src)}" alt="${c.alt}" draggable="false" decoding="async">
+            </div>`).join('')}
+        </div>
+      </div>`;
+    return el;
+  }
 
   // Image with WebP + fallback (using <picture> when both exist)
   const imgSrc = page.image;
@@ -64,7 +85,7 @@ export function createReaderScreen() {
         <div class="reader-hud-left">
           <!-- Home -->
           <button class="reader-hud-img-btn" id="reader-home-btn" aria-label="Return to home">
-            ${icon('arrow-left', 'reader-hud-btn-img')}
+            <img src="/assets/ui/Vector.png" class="reader-hud-btn-img" alt="" aria-hidden="true" draggable="false"/>
           </button>
           <!-- Restart -->
           <button class="reader-hud-img-btn reader-hud-restart-btn" id="reader-restart-btn" aria-label="Restart from page 1">
@@ -72,13 +93,17 @@ export function createReaderScreen() {
           </button>
           <!-- Autoplay -->
           <button class="reader-hud-img-btn" id="reader-autoplay-btn" aria-label="Toggle autoplay" aria-pressed="false">
-            ${icon('circle-play', 'reader-hud-btn-img')}
+            <img src="/assets/ui/Layer 6.png" class="reader-hud-btn-img" alt="" aria-hidden="true" draggable="false"/>
           </button>
         </div>
         <div class="reader-hud-right">
           <!-- Settings -->
           <button class="reader-hud-img-btn" id="reader-settings-btn" aria-label="Open audio settings" aria-expanded="false">
-            ${icon('menu', 'reader-hud-btn-img')}
+            <span class="reader-hud-btn-img" aria-hidden="true">
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+        <img src="/assets/ui/Rectangle 43.png" draggable="false" alt=""/>
+      </span>
           </button>
         </div>
       </div>
@@ -118,11 +143,18 @@ let currentIndex = 0;
 let pageEls = [];
 /** @type {boolean} */
 let isTransitioning = false;
+/** @type {HTMLElement|null} */
+let readerEl = null;
+/** @type {number|null} */
+let advanceTimer = null;
+/** @type {number} page whose video may play (set when a page becomes current) */
+let videoTarget = -1;
 /** @type {number|null} */
 let autoplayTimer = null;
 
 /** @param {HTMLElement} el */
 export function mountReader(el) {
+  readerEl = el;
   const stage    = el.querySelector('.reader-stage');
   const hudTop   = el.querySelector('#reader-hud-top');
   const prevBtn  = el.querySelector('#reader-prev-btn');
@@ -140,12 +172,25 @@ export function mountReader(el) {
       return pe;
     });
 
+    // Decode caption pictures now so they are ready to fade in without a hitch
+    stage.querySelectorAll('.reader-page-caption').forEach(img => {
+      const done = () => layoutCaptions(img.closest('.reader-page'));
+      (img.decode ? img.decode() : Promise.resolve()).then(done, done);
+    });
+    // The picture is cropped differently on every screen shape: re-fit when it changes
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => layoutCaptions(pageEls[currentIndex]), 120);
+    });
+
     // HUD — always visible
     function showHud() {
       [hudTop, ...el.querySelectorAll('.reader-nav'), el.querySelector('#reader-progress')]
         .forEach(h => h && h.classList.add('show'));
     }
     el._showHud = showHud;
+    ['pointermove', 'pointerdown', 'keydown'].forEach(t => el.addEventListener(t, () => wakeHud(el), { passive: true }));
     el._stopHud = () => {};
 
     // Navigation: buttons
@@ -225,20 +270,22 @@ export function mountReader(el) {
     el.querySelector('#reader-settings-btn').addEventListener('click', toggleSettings);
   }
 
-  // Every visit: restore saved page, activate, show HUD
-  try {
-    const saved = parseInt(localStorage.getItem(STORAGE_KEY), 10);
-    if (!isNaN(saved) && saved >= 0 && saved < pages.length) currentIndex = saved;
-  } catch { /* ignore */ }
-
-  activatePage(currentIndex, null, refs);
-  preloadAhead(currentIndex);
+  // Every visit starts at page 1
+  activatePage(0, null, refs);
+  preloadAhead(0);
   if (el._showHud) el._showHud();
 }
 
 /** @param {HTMLElement} el */
 export function unmountReader(el) {
   stopAutoplay(el);
+  pageEls.forEach(pe => pe.querySelector('video')?.pause());
+  resetCaptions();
+  clearTimeout(advanceTimer);
+  AudioManager.stopNarration();
+  AudioManager.stopAmbience({ fade: true });
+  clearTimeout(el._hudIdleTimer);
+  el.classList.remove('hud-idle');
   if (el._hideTimer) el._hideTimer();
   gsap.killTweensOf(pageEls);
 }
@@ -263,8 +310,152 @@ function getRefs(el) {
   };
 }
 
+/** Video pages: portrait keeps the buttons clear of the picture (see .is-video-page in reader.css). */
+function markVideoPage(el, idx) {
+  if (!el) return;
+  el.classList.toggle('is-video-page', !!pages[idx]?.video);
+  wakeHud(el);
+}
+
+/** Show the buttons; on a landscape video page, hide them again after a few idle seconds. */
+function wakeHud(el) {
+  el.classList.remove('hud-idle');
+  clearTimeout(el._hudIdleTimer);
+  if (el.classList.contains('is-video-page') && window.matchMedia(LANDSCAPE).matches) {
+    el._hudIdleTimer = setTimeout(() => el.classList.add('hud-idle'), HUD_IDLE_MS);
+  }
+}
+
+/**
+ * Put the current page's video back on its first frame; pause every other one.
+ * A page with narration waits for the voice to start (see playPageVideo) so the picture and the
+ * voice finish together; other video pages start right away.
+ */
+function syncVideos(idx) {
+  videoTarget = idx;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  pageEls.forEach((pe, i) => {
+    const v = pe.querySelector('video');
+    if (!v) return;
+    v.pause();
+    if (i !== idx) return;
+    v.currentTime = 0;
+    if (!reduced && !pages[i].narration) playPageVideo(i);
+  });
+}
+
+function playPageVideo(idx) {
+  const v = pageEls[idx]?.querySelector('video');
+  if (!v || idx !== videoTarget) return;   // the reader has moved on
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  v.play().catch(() => { /* autoplay blocked: first frame stays visible */ });
+}
+
+/**
+ * Where the panel is drawn inside its frame-sized PNG: its centre and size, in % of the frame.
+ * Measured once from the picture's opaque pixels, so a new caption only needs its target position.
+ */
+function measurePanel(img) {
+  if (img._panel) return img._panel;
+  const W = 400, H = Math.max(1, Math.round(W * img.naturalHeight / img.naturalWidth));
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const g = canvas.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0, W, H);
+  const px = g.getImageData(0, 0, W, H).data;
+  let l = W, t = H, r = -1, b = -1;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      if (px[(y * W + x) * 4 + 3] > 40) { if (x < l) l = x; if (x > r) r = x; if (y < t) t = y; if (y > b) b = y; }
+    }
+  }
+  if (r < 0) return (img._panel = { cx: 50, cy: 50, w: 0, h: 0 });
+  return (img._panel = {
+    cx: (l + r + 1) / 2 / W * 100, cy: (t + b + 1) / 2 / H * 100,
+    w: (r - l + 1) / W * 100,      h: (b - t + 1) / H * 100,
+  });
+}
+
+/** How far to move [a,b] so it sits inside [lo,hi] (0 if it already does, or can't fit). */
+const nudge = (a, b, lo, hi) => (b - a > hi - lo ? 0 : a < lo ? lo - a : b > hi ? hi - b : 0);
+
+/**
+ * Put each caption panel at its designed spot on the picture. If a narrower screen crops the
+ * picture so that the panel would be cut off at the edge, slide it back inside (3% margin).
+ */
+function layoutCaptions(pe) {
+  const frame = pe?.querySelector('.reader-caption-frame');
+  const media = pe?.querySelector('.reader-page-media');
+  if (!frame || !media) return;
+  const fr = frame.getBoundingClientRect();
+  const mr = media.getBoundingClientRect();
+  if (!fr.width || !mr.width) return;
+  const mx = mr.width * 0.03, my = mr.height * 0.03;
+
+  pe.querySelectorAll('.reader-caption').forEach(wrap => {
+    const img = wrap.firstElementChild;
+    if (!img?.naturalWidth) return;                    // not loaded yet; laid out again once decoded
+    const p = measurePanel(img);
+    const ax = Number(wrap.dataset.atX), ay = Number(wrap.dataset.atY);
+    const left = fr.left + (ax - p.w / 2) / 100 * fr.width;
+    const top = fr.top + (ay - p.h / 2) / 100 * fr.height;
+    const nx = nudge(left, left + p.w / 100 * fr.width, mr.left + mx, mr.right - mx);
+    const ny = nudge(top, top + p.h / 100 * fr.height, mr.top + my, mr.bottom - my);
+    // percentages are of the frame (the wrapper is frame-sized), then the px nudge
+    wrap.style.translate = `calc(${(ax - p.cx).toFixed(3)}% + ${nx.toFixed(1)}px) calc(${(ay - p.cy).toFixed(3)}% + ${ny.toFixed(1)}px)`;
+  });
+}
+
+/** Fade a caption panel up into place over the video. */
+function revealCaption(img) {
+  if (!img || img._shown) return;
+  img._shown = true;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  gsap.killTweensOf(img);
+  if (reduced) { gsap.set(img, { opacity: 1, y: 0 }); return; }
+
+  // Start the fade only once the picture is decoded, otherwise the first frames are skipped and it pops
+  const rise = () => {
+    if (!img._shown) return;
+    gsap.fromTo(img,
+      { opacity: 0, y: 56 },
+      { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' });
+  };
+  (img.decode ? img.decode() : Promise.resolve()).then(rise, rise);
+}
+
+/** Hide every caption and cancel any pending reveal (on leaving a page, or restarting it). */
+function resetCaptions() {
+  pageEls.forEach(pe => {
+    pe._capTimers?.forEach(clearTimeout);
+    pe._capTimers = null;
+    pe.querySelectorAll('.reader-page-caption').forEach(img => {
+      img._shown = false;
+      gsap.killTweensOf(img);
+      gsap.set(img, { opacity: 0, y: 0 });
+    });
+  });
+}
+
+/**
+ * Caption i appears when narration clip i starts. If the narration can't start (audio not
+ * unlocked yet, file missing), each caption still appears at its fallbackAt time.
+ */
+function startCaptions(idx) {
+  resetCaptions();
+  const page = pages[idx];
+  if (!page?.captions) return;
+  const imgs = [...pageEls[idx].querySelectorAll('.reader-page-caption')];
+  layoutCaptions(pageEls[idx]);
+  pageEls[idx]._capTimers = page.captions.map((c, i) =>
+    setTimeout(() => revealCaption(imgs[i]), (c.fallbackAt ?? 0) * 1000));
+  return imgs;
+}
+
 /** Instantly set a page active (no animation) */
 function activatePage(idx, _direction, refs) {
+  markVideoPage(refs.el, idx);
+  syncVideos(idx);
   pageEls.forEach((pe, i) => {
     pe.classList.toggle('is-current', i === idx);
     gsap.set(pe, { opacity: i === idx ? 1 : 0, x: 0 });
@@ -284,6 +475,9 @@ function transitionTo(idx, direction, refs) {
   const sign   = direction === 'next' ? 1 : -1;
 
   isTransitioning = true;
+  AudioManager.playSfx(PAGE_TURN_SFX);
+  markVideoPage(refs.el, idx);
+  syncVideos(idx);
 
   if (reduced) {
     gsap.set(outEl, { opacity: 0 });
@@ -324,16 +518,45 @@ function updateUI({ prevBtn, nextBtn, progFill }) {
   if (nextBtn) nextBtn.disabled = false; // last page leads to minigame, never disabled
   if (progFill) progFill.style.setProperty('--progress', `${pct}%`);
 
-  try { localStorage.setItem(STORAGE_KEY, String(i)); } catch { /* ignore */ }
 }
 
 function triggerPageAudio(idx) {
   const page = pages[idx];
   if (!page) return;
+  const captionImgs = startCaptions(idx);
+  clearTimeout(advanceTimer);
 
   if (page.music)    AudioManager.playMusic(page.music);
-  if (page.ambience) AudioManager.playAmbience(page.ambience);
-  AudioManager.playNarration(page.narration || null);
+  if (page.ambience) AudioManager.playAmbience(page.ambience, { gain: page.ambienceVolume ?? 1 });
+  else if (page.ambience === null) AudioManager.stopAmbience({ fade: true });
+  // The video starts with the voice; if the voice can't start (audio blocked), start it anyway
+  if (page.video && page.narration) {
+    (pageEls[idx]._capTimers ||= []).push(setTimeout(() => playPageVideo(idx), VIDEO_START_FALLBACK_MS));
+  }
+  AudioManager.playNarration(page.narration || null, {
+    onTrack: i => {
+      if (i === 0) playPageVideo(idx);
+      const cap = page.captions?.[i];
+      if (!cap) return;
+      // wait for the voice itself (clips can open with a moment of silence)
+      const t = setTimeout(() => revealCaption(captionImgs?.[i]), (cap.voiceAt ?? 0) * 1000);
+      pageEls[idx]._capTimers?.push(t);
+    },
+    // After the last clip: wait, then turn the page (unless the reader already moved on)
+    onEnd: () => {
+      if (page.advanceAfter == null) return;
+      let wait = page.advanceAfter;
+      // If the video is about to finish anyway, turn the page as it does, so the last frame never sits still
+      const v = pageEls[idx]?.querySelector('video');
+      if (v && !v.loop && v.duration) {
+        const left = (v.duration - v.currentTime) / v.playbackRate;
+        if (Math.abs(left - wait) <= VIDEO_END_SNAP_S) wait = Math.max(left - 0.3, 0);   // start sliding just before the end
+      }
+      advanceTimer = setTimeout(() => {
+        if (currentIndex === idx && readerEl?.classList.contains('active')) goTo(idx + 1, 'next', readerEl);
+      }, wait * 1000);
+    },
+  });
 
   (page.sfx || []).filter(s => s.on === 'enter').forEach(s => AudioManager.playSfx(s.src));
 }
@@ -346,25 +569,19 @@ function startAutoplay(el) {
     }
     goTo(currentIndex + 1, 'next', el);
   }, AUTOPLAY_INTERVAL_MS);
-  setAutoplayState(el, true);
+  el.querySelector('#reader-autoplay-btn')?.classList.add('autoplay-active');
 }
 
 function stopAutoplay(el) {
   if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-  setAutoplayState(el, false);
-}
-
-/** Gold glow + play/pause icon on the autoplay button. */
-function setAutoplayState(el, on) {
-  const btn = el?.querySelector('#reader-autoplay-btn');
-  if (!btn) return;
-  btn.classList.toggle('autoplay-active', on);
-  btn.innerHTML = icon(on ? 'circle-pause' : 'circle-play', 'reader-hud-btn-img');
+  el?.querySelector('#reader-autoplay-btn')?.classList.remove('autoplay-active');
 }
 
 function preloadAhead(idx) {
   for (let i = idx + 1; i <= idx + PRELOAD_AHEAD && i < pages.length; i++) {
     const img = pageEls[i]?.querySelector('.reader-page-img');
     if (img && !img.src) img.src = pages[i].image;
+    const video = pageEls[i]?.querySelector('video');
+    if (video) video.preload = 'auto';
   }
 }

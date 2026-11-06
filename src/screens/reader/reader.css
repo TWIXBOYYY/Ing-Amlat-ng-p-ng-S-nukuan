@@ -1,5 +1,9 @@
 .screen-reader {
   background: #111;
+  /* Space the on-screen buttons take up (portrait video pages keep their picture clear of them) */
+  --hud-top: clamp(72px, 11vmin, 104px);
+  --hud-bottom: clamp(64px, 10.6vmin, 96px);
+  --hud-nav: clamp(64px, 9vmin, 120px);                    /* arrow button size */
 }
 
 /* ── Comic page layers ── */
@@ -22,6 +26,62 @@
   opacity: 1;
   pointer-events: auto;
   z-index: 2;
+}
+
+/* Video page: the motion graphic fills the whole screen (cropped a little to fit).
+   On portrait screens it is shown whole between the buttons instead (see the portrait block). */
+.reader-page-media {
+  position: absolute;
+  inset: 0;
+}
+
+.reader-page-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caption panels. The frame is exactly the picture the video shows (same size, same crop), so a
+   percentage position on it lands on the same spot of the artwork at every screen size. */
+.reader-page-media {
+  container-type: size;
+  --video-ar: calc(1920 / 1165);
+}
+
+.reader-caption-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, calc(100cqh * var(--video-ar)));   /* cover, like the video */
+  aspect-ratio: 1920 / 1165;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Each wrapper carries the panel's placement (inline style); only the <img> is animated */
+.reader-caption {
+  position: absolute;
+  inset: 0;
+}
+
+.reader-page-caption {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+/* While a video plays, the buttons fade away after a few seconds without mouse or key activity
+   and come back on any movement (landscape only; see wakeHud in reader.js) */
+.screen-reader.hud-idle .reader-hud-top.show,
+.screen-reader.hud-idle .reader-nav.show,
+.screen-reader.hud-idle .reader-progress.show {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .reader-page-img {
@@ -111,7 +171,6 @@
 
 /* ── PNG-based HUD buttons (shared base) ── */
 .reader-hud-img-btn {
-  color: #fff;
   --btn-h: clamp(54px, 9vmin, 86px);
   display: flex;
   align-items: center;
@@ -140,8 +199,8 @@
 }
 
 .reader-hud-btn-img {
-  width: 46%;
-  height: 46%;
+  width: 62%;
+  height: 62%;
   object-fit: contain;
   display: block;
   user-select: none;
@@ -297,6 +356,30 @@ span.reader-hud-btn-img img {
 
 /* ── Portrait / narrow-screen adjustments ── */
 @media (orientation: portrait), (max-width: 520px) {
+  .screen-reader {
+    --hud-top: clamp(64px, 10vmin, 96px);
+    --hud-nav: clamp(52px, 8vmin, 100px);
+  }
+
+  .is-video-page .reader-page-media {
+    top: var(--hud-top);
+    bottom: calc(var(--hud-bottom) + var(--hud-nav) + 8px);
+  }
+
+  .is-video-page .reader-page-video {
+    object-fit: contain;
+  }
+
+  .is-video-page .reader-caption-frame {
+    width: min(100cqw, calc(100cqh * var(--video-ar)));   /* contain, like the video */
+  }
+
+  .is-video-page .reader-nav {
+    top: auto;
+    bottom: calc(var(--hud-bottom) + 4px);
+    transform: none;
+  }
+
   .reader-hud-img-btn {
     --btn-h: clamp(44px, 8vmin, 72px);
   }

@@ -15,7 +15,13 @@ let unlocked = false;
 /** @type {Howl|null} */ let _music     = null;
 /** @type {Howl|null} */ let _ambience  = null;
 /** @type {Howl|null} */ let _narration = null;
+const FADE_OUT_MS = 350;
+const AMBIENCE_FADE_MS = 1500;
+/** @type {Howl[]} */ let _narrationHowls = [];
+let _narrationToken = 0;   // bumped whenever narration is replaced, so a stale clip never chains on
 let _musicSrc    = null;
+let _ambienceGain = 1;   // per-page level of the ambience, relative to the ambience channel
+const _sfxCache = new Map();
 let _ambienceSrc = null;
 
 function load() {
@@ -62,7 +68,7 @@ export const AudioManager = {
 
   _applyAll() {
     if (_music)     _music.volume(eff('music'));
-    if (_ambience)  _ambience.volume(eff('ambience'));
+    if (_ambience)  _ambience.volume(eff('ambience') * _ambienceGain);
     if (_narration) _narration.volume(eff('narration'));
   },
 
@@ -117,41 +123,96 @@ export const AudioManager = {
     _musicSrc = null;
   },
 
-  /** @param {string|null} src */
-  playAmbience(src, { crossfade = true } = {}) {
+  /**
+   * Loop an ambience, fading it in. Replaces (and fades out) the current one.
+   * @param {string|null} src
+   * @param {{ crossfade?: boolean, gain?: number }} opts  gain: 0..1, level under the ambience channel volume
+   */
+  playAmbience(src, { crossfade = true, gain = 1 } = {}) {
     if (!src || src === _ambienceSrc && _ambience?.playing()) return;
-    if (_ambience) {
-      const old = _ambience;
-      if (crossfade) {
-        old.fade(old.volume(), 0, 1200);
-        setTimeout(() => old.stop(), 1300);
-      } else {
-        old.stop();
-      }
-    }
+    this.stopAmbience({ fade: crossfade });
     _ambienceSrc = src;
-    _ambience = new Howl({ src: [src], loop: true, volume: eff('ambience') });
-    if (unlocked) _ambience.play();
+    _ambienceGain = gain;
+    const target = eff('ambience') * gain;
+    _ambience = new Howl({ src: [src], loop: true, volume: unlocked ? 0 : target });
+    if (unlocked) {
+      _ambience.play();
+      _ambience.fade(0, target, AMBIENCE_FADE_MS);
+    }
   },
 
-  stopAmbience() {
-    _ambience?.stop(); _ambience = null; _ambienceSrc = null;
+  /** @param {{ fade?: boolean }} opts */
+  stopAmbience({ fade = false } = {}) {
+    const old = _ambience;
+    _ambience = null; _ambienceSrc = null;
+    if (!old) return;
+    if (fade) {
+      old.fade(old.volume(), 0, AMBIENCE_FADE_MS);
+      setTimeout(() => old.unload(), AMBIENCE_FADE_MS + 100);
+    } else {
+      old.unload();
+    }
   },
 
-  /** @param {string|null} src */
-  playNarration(src) {
+  /**
+   * One clip, or a list played back to back. A clip is a path, or an object:
+   *   { src, startSeconds?, maxSeconds? } plays the part of the file from startSeconds up to maxSeconds
+   *   (use it to skip leading silence or cut a tail). A clip with maxSeconds fades out over its
+   *   last moment instead of stopping dead. startSeconds needs maxSeconds.
+   * Every clip is loaded up front, so the next one starts the instant the previous one ends.
+   * @param {Clip|Clip[]|null} src
+   * @param {{ onTrack?: (index: number) => void, onEnd?: () => void }} opts
+   *   onTrack runs as each clip starts, onEnd after the last one finishes
+   */
+  playNarration(src, { onTrack, onEnd } = {}) {
+    this.stopNarration();
+    const token = _narrationToken;
+    const list = Array.isArray(src) ? src : (src ? [src] : []);
+
+    const howls = list.map((item, i) => {
+      const clip = typeof item === 'string' ? { src: item } : item;
+      const startMs = (clip.startSeconds || 0) * 1000;
+      const endMs = (clip.maxSeconds || 0) * 1000;
+      const lengthMs = endMs - startMs;
+      const h = new Howl({
+        src: [clip.src],
+        volume: eff('narration'),
+        sprite: endMs ? { __default: [startMs, lengthMs] } : undefined,   // play() then covers just that part
+        onplay: () => {
+          if (token !== _narrationToken) return;
+          onTrack?.(i);
+          if (endMs) setTimeout(() => { if (token === _narrationToken) h.fade(h.volume(), 0, FADE_OUT_MS); }, lengthMs - FADE_OUT_MS);
+        },
+        onend: () => playAt(i + 1),
+      });
+      return h;
+    });
+    _narrationHowls = howls;
+
+    function playAt(i) {
+      if (token !== _narrationToken) return;
+      if (i >= howls.length) { if (howls.length) onEnd?.(); return; }
+      _narration = howls[i];
+      _narration.volume(eff('narration'));
+      if (unlocked) _narration.play();   // otherwise unlock() starts it
+    }
+    playAt(0);
+  },
+
+  stopNarration() {
+    _narrationToken++;
     _narration?.stop(); _narration = null;
-    if (!src) return;
-    _narration = new Howl({ src: [src], volume: eff('narration') });
-    if (unlocked) _narration.play();
+    _narrationHowls.forEach(h => h.unload());   // drop clips that never got to play
+    _narrationHowls = [];
   },
-
-  stopNarration() { _narration?.stop(); _narration = null; },
 
   /** Fire-and-forget SFX. */
   playSfx(src) {
     if (!unlocked || !src) return;
-    new Howl({ src: [src], volume: eff('sfx') }).play();
+    let h = _sfxCache.get(src);   // one Howl per file, so a repeated sound starts instantly
+    if (!h) { h = new Howl({ src: [src] }); _sfxCache.set(src, h); }
+    h.volume(eff('sfx'));
+    h.play();
   },
 
   pauseAll() { _music?.pause(); _ambience?.pause(); _narration?.pause(); },

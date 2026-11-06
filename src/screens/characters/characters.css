@@ -199,7 +199,6 @@
 
 /* ── Back button — icon only ── */
 .char-back-btn {
-  color: #fff;
   --btn-size: clamp(44px, 7vmin, 72px);
   position: absolute;
   top: clamp(16px, 2.5vmin, 28px);
@@ -231,8 +230,11 @@
 }
 
 .char-back-arrow {
-  width: 40%;
-  height: 40%;
+  width: 45%;
+  height: 45%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════════════════════

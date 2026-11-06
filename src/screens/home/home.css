@@ -107,7 +107,6 @@
 
 /* ── HUD buttons ── */
 .home-settings-btn {
-  color: #fff;
   --btn-h: clamp(54px, 9vmin, 86px);
   position: absolute;
   top: clamp(16px, 2.5vmin, 28px);
@@ -139,8 +138,12 @@
 }
 
 .home-settings-btn-img {
-  width: 46%;
-  height: 46%;
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
 }
 
 span.home-settings-btn-img {
@@ -189,5 +192,46 @@ span.home-settings-btn-img img {
   .home-menu-btn {
     font-size: clamp(1.25rem, 6vw, 2rem);
     padding: 8px 24px;
+  }
+}
+
+/* ── Phones in landscape (short screens, e.g. 956×440) ──
+   Size everything from the screen height, so the title is never cut off and the menu fits:
+   title + tagline at the top over the peak, the four menu items in one row on the grass. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .home-title-block {
+    top: 3vh;
+    bottom: auto;
+  }
+
+  .home-title-img {
+    width: auto;
+    height: 44vh;                 /* artwork is 612×397 */
+  }
+
+  .home-tagline-img {
+    width: calc(44vh * 612 / 397);   /* as wide as the title */
+    margin-top: 0.4vh;
+  }
+
+  .home-menu {
+    top: auto;
+    bottom: calc(4.5vh + env(safe-area-inset-bottom));
+    flex-direction: row;
+    gap: clamp(6px, 2.6vw, 32px);
+    width: max-content;
+    max-width: 96vw;
+  }
+
+  .home-menu-btn {
+    font-size: clamp(1rem, 6.4vh, 1.7rem);
+    padding: 6px clamp(8px, 1.6vw, 20px);
+    min-height: 44px;             /* comfortable touch target */
+  }
+
+  .home-settings-btn {
+    --btn-h: clamp(44px, 12vh, 64px);
+    top: clamp(8px, 3vh, 20px);
+    right: max(clamp(12px, 2.5vw, 28px), env(safe-area-inset-right));
   }
 }

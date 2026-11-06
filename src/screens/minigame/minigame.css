@@ -32,7 +32,6 @@
 
 /* ── Back button — icon only ── */
 .mg-home-btn {
-  color: #fff;
   background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
   border: none;
   padding: 0;
@@ -50,8 +49,10 @@
 .mg-home-btn:active { transform: scale(0.96); }
 
 .mg-home-arrow {
-  width: 40%;
-  height: 40%;
+  width: 45%;
+  height: auto;
+  display: block;
+  pointer-events: none;
 }
 
 /* ── Cards ── */

@@ -16,3 +16,6 @@ Thumbs.db
 # Local env files
 .env
 .env.local
+
+# Full-length source recording (185 MB, over GitHub's 100 MB limit); the site uses audio/ambience/space-ambient.mp3
+public/assets/audio/ambience/Space Ambient Music*

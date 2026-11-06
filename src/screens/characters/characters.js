@@ -1,6 +1,5 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
-import { icon } from '../../components/icons.js';
 
 const CHARACTERS = [
   {
@@ -121,7 +120,7 @@ export function createCharactersScreen() {
     </div>
 
     <button class="char-back-btn" aria-label="Go back to home">
-      ${icon('arrow-left', 'char-back-arrow')}
+      <img src="/assets/ui/Vector.png" class="char-back-arrow" alt="" aria-hidden="true" draggable="false"/>
     </button>
   `;
 
