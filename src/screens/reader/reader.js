@@ -407,9 +407,11 @@ function layoutCaptions(pe) {
 }
 
 /** Fade a caption panel up into place over the video. */
-function revealCaption(img) {
+function revealCaption(img, replaced = []) {
   if (!img || img._shown) return;
   img._shown = true;
+  // a box drawn over the same spot takes the place of the earlier one
+  replaced.forEach(o => { if (o?._shown) { o._shown = false; gsap.killTweensOf(o); gsap.to(o, { opacity: 0, duration: 0.5, ease: 'power1.out' }); } });
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   gsap.killTweensOf(img);
   if (reduced) { gsap.set(img, { opacity: 1, y: 0 }); return; }
@@ -448,7 +450,7 @@ function startCaptions(idx) {
   const imgs = [...pageEls[idx].querySelectorAll('.reader-page-caption')];
   layoutCaptions(pageEls[idx]);
   pageEls[idx]._capTimers = page.captions.map((c, i) =>
-    setTimeout(() => revealCaption(imgs[i]), (c.fallbackAt ?? 0) * 1000));
+    setTimeout(() => revealCaption(imgs[i], (c.replaces || []).map(k => imgs[k])), (c.fallbackAt ?? 0) * 1000));
   return imgs;
 }
 
@@ -539,7 +541,7 @@ function triggerPageAudio(idx) {
       const cap = page.captions?.[i];
       if (!cap) return;
       // wait for the voice itself (clips can open with a moment of silence)
-      const t = setTimeout(() => revealCaption(captionImgs?.[i]), (cap.voiceAt ?? 0) * 1000);
+      const t = setTimeout(() => revealCaption(captionImgs?.[i], (cap.replaces || []).map(k => captionImgs?.[k])), (cap.voiceAt ?? 0) * 1000);
       pageEls[idx]._capTimers?.push(t);
     },
     // After the last clip: wait, then turn the page (unless the reader already moved on)
@@ -550,7 +552,8 @@ function triggerPageAudio(idx) {
       const v = pageEls[idx]?.querySelector('video');
       if (v && !v.loop && v.duration) {
         const left = (v.duration - v.currentTime) / v.playbackRate;
-        if (Math.abs(left - wait) <= VIDEO_END_SNAP_S) wait = Math.max(left - 0.3, 0);   // start sliding just before the end
+        if (page.videoSeconds != null) wait = Math.max(page.videoSeconds - (v.currentTime || 0) - 0.3, 0);   // turn as the 9s cut ends
+        else if (Math.abs(left - wait) <= VIDEO_END_SNAP_S) wait = Math.max(left - 0.3, 0);   // start sliding just before the end
       }
       advanceTimer = setTimeout(() => {
         if (currentIndex === idx && readerEl?.classList.contains('active')) goTo(idx + 1, 'next', readerEl);

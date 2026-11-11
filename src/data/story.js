@@ -48,6 +48,7 @@
  *                    would be cut off is nudged back inside the screen.
  * @property {number} [voiceAt]  seconds after its narration clip starts that the voice begins (the clip can open with silence)
  * @property {number} fallbackAt  seconds after page enter to show it if the narration can't play (clip start + voiceAt)
+ * @property {number[]} [replaces]  indexes of earlier boxes drawn over the same spot; they fade out as this one appears
  */
 
 /**
@@ -65,6 +66,7 @@
  * @property {PageLayer[]}  [layers]
  * @property {Clip|Clip[]} [narration]
  * @property {number}       [advanceAfter]
+ * @property {number}       [videoSeconds]  play only this many seconds of the video, then turn the page
  * @property {Caption[]}    [captions]
  * @property {string}       [music]
  * @property {string|null}  [ambience]
@@ -139,12 +141,51 @@ export const pages = [
   {
     id: 'page-03',
     image: '/assets/comic/page-03.webp',
-    alt: 'The ancient forest surrounding the mountain rustles with whispers of old magic and forgotten lore.',
-    music:    '/assets/audio/music/theme-forest.mp3',
-    ambience: '/assets/audio/ambience/forest-night.mp3',
-    narration: '/assets/audio/narration/page-03.mp3',
-    sfx: [
-      { src: '/assets/audio/sfx/leaves-rustle.mp3', on: 'enter' },
+    video: '/assets/comic/s1p3/S1P3 MOTION.mp4',
+    alt: 'At the bottom lies Indung Laut, the mother ocean, where a giant crocodile rests.',
+    music:    '/assets/audio/music/theme-main.mp3',
+    ambience: null,
+    // Clip 1: the recording has other takes before the line for this page, which starts at 16s.
+    // Clips 2-3 are one recording: the croco line (voice stops ~7.3s) and the "world shakes" line (starts ~8.1s),
+    // split at 7.5s so each has its own box; the 0.6s of silence between them is kept.
+    narration: [
+      { src: '/assets/narration/s1p3/S1-P3-NARRATOR-001.wav', startSeconds: 16, maxSeconds: 24.5 },        // 8.5s
+      { src: '/assets/narration/s1p3/S1-P3-PANEL1-NARRATOR-001.wav', startSeconds: 0.3, maxSeconds: 7.5 },   // 7.2s
+      { src: '/assets/narration/s1p3/S1-P3-PANEL1-NARRATOR-001.wav', startSeconds: 7.5, maxSeconds: 11.8 },  // 4.3s
+    ],
+    advanceAfter: 3,
+    videoSeconds: 20,          // the narration adds up to 8.5 + 7.2 + 4.3 = 20s; only that much video is used
+    // Box i is shown as narration clip i starts. The first three share the top-left corner, so each replaces the last.
+    captions: [
+      {
+        src: '/assets/comic/s1p3/S1_P3 (At the bottom lies Indung).webp',
+        alt: 'At the bottom lies Indung Laut, the mother ocean, where a giant crocodile rests.',
+        at: { x: 17.1, y: 29.3 },
+        voiceAt: 0.3,
+        fallbackAt: 0.3,
+      },
+      {
+        src: '/assets/comic/s1p3/S1_P3 (The giant Croco).webp',
+        alt: 'The giant crocodile is named Indung Tibuan. The earth rests upon her back...',
+        at: { x: 24, y: 25 },
+        voiceAt: 0.5,
+        fallbackAt: 8.5,
+        replaces: [0],
+      },
+      {
+        src: '/assets/comic/s1p3/S1_P3 (And the world shakes).webp',
+        alt: '...and the world shakes whenever she moves!',
+        at: { x: 24, y: 25 },       // same spot as the box before it: clear of the croco's back
+        voiceAt: 0.6,
+        fallbackAt: 16.2,
+        replaces: [1],
+      },
+      {
+        src: '/assets/comic/s1p3/S1_P3 FOOTNOTE.webp',
+        alt: '*Ibpang Banua is the sky and Indung Laut is the water. They are both formless in nature.',
+        at: { x: 81, y: 81 },
+        fallbackAt: 6,   // no voice of its own: it follows the first box
+      },
     ],
   },
   {

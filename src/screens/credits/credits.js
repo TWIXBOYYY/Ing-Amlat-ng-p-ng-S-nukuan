@@ -55,7 +55,7 @@ export function createCreditsScreen() {
   el.innerHTML = `
     <h2 class="credits-title">CREDITS</h2>
     <div class="credits-grid">${sectionsHTML}</div>
-    <p class="credits-footer">Dakal a Salamat!</p>
+    <p class="credits-footer">Dakal a Salámat!</p>
     <button class="screen-back-btn" aria-label="Go back to home">
       <img src="/assets/ui/NEXT BUTTON.png" class="nav-arrow-img nav-arrow-flip" alt="" aria-hidden="true" draggable="false"/>
       <span class="screen-back-label">Back</span>

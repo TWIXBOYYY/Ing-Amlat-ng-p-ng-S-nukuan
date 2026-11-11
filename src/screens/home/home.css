@@ -49,7 +49,7 @@
 .home-title-block {
   position: absolute;
   left: 50%;
-  bottom: 50%;
+  top: 1vh;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -59,14 +59,14 @@
 }
 
 .home-title-img {
-  width: clamp(280px, 40vw, 720px);
+  width: min(clamp(320px, 46vw, 900px), 76vh);   /* never taller than about half the screen */
   height: auto;
   display: block;
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
 }
 
 .home-tagline-img {
-  width: clamp(180px, 26vw, 480px);
+  width: clamp(200px, 30vw, 540px);
   height: auto;
   display: block;
   margin-top: clamp(2px, 0.5vmin, 8px);
@@ -76,7 +76,7 @@
 /* ── Menu ── */
 .home-menu {
   position: absolute;
-  top: 56%;
+  top: 58%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -88,11 +88,13 @@
 
 .home-menu-btn {
   font-family: var(--font-mclaren);
-  font-size: var(--fs-menu);
+  font-size: clamp(1.4rem, 4.4vmin, 3.2rem);
   font-weight: 400;
   color: var(--color-white);
-  letter-spacing: 0.07em;
-  padding: 10px 32px;
+  letter-spacing: 0.03em;
+  font-kerning: normal;
+  font-feature-settings: 'kern' 1;
+  padding: 6px 28px;
   text-shadow: 0 2px 20px rgba(0,0,0,0.75);
   transition: color 0.22s, text-shadow 0.22s;
   border-radius: 6px;
@@ -168,16 +170,21 @@ span.home-settings-btn-img img {
 
 /* ── Portrait adjustments ── */
 @media (orientation: portrait) {
+  .home-title-block {
+    top: auto;
+    bottom: 50%;
+  }
+
   .home-menu {
     top: 62%;
   }
 
   .home-title-img {
-    width: clamp(220px, 55vw, 480px);
+    width: clamp(240px, 66vw, 560px);
   }
 
   .home-tagline-img {
-    width: clamp(160px, 42vw, 360px);
+    width: clamp(160px, 46vw, 400px);
   }
 
   .home-settings-btn {
@@ -190,7 +197,7 @@ span.home-settings-btn-img img {
 /* ── Small portrait phones (≤420px) ── */
 @media (max-width: 420px) and (orientation: portrait) {
   .home-menu-btn {
-    font-size: clamp(1.25rem, 6vw, 2rem);
+    font-size: clamp(1.2rem, 5.6vw, 1.9rem);
     padding: 8px 24px;
   }
 }
@@ -206,11 +213,11 @@ span.home-settings-btn-img img {
 
   .home-title-img {
     width: auto;
-    height: 44vh;                 /* artwork is 612×397 */
+    height: 46vh;                 /* artwork is 612×397 */
   }
 
   .home-tagline-img {
-    width: calc(44vh * 612 / 397);   /* as wide as the title */
+    width: calc(46vh * 612 / 397);   /* as wide as the title */
     margin-top: 0.4vh;
   }
 
@@ -224,8 +231,9 @@ span.home-settings-btn-img img {
   }
 
   .home-menu-btn {
-    font-size: clamp(1rem, 6.4vh, 1.7rem);
-    padding: 6px clamp(8px, 1.6vw, 20px);
+    font-size: clamp(1rem, 6vh, 1.6rem);
+    letter-spacing: 0.03em;
+    padding: 6px clamp(6px, 1.4vw, 18px);
     min-height: 44px;             /* comfortable touch target */
   }
 

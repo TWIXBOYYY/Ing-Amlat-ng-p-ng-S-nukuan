@@ -2,7 +2,6 @@ import { AudioManager } from '../../audio/AudioManager.js';
 
 const CHANNELS = [
   { key: 'master',    label: 'Master Volume'        },
-  { key: 'music',     label: 'Music Volume'          },
   { key: 'ambience',  label: 'Ambience Volume'       },
   { key: 'sfx',       label: 'Sound Effects Volume'  },
   { key: 'narration', label: 'Dialogue Volume'       },

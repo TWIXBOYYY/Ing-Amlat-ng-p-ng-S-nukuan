@@ -159,21 +159,17 @@
 /* Desktop: the arrows fade in when the pointer is over the pagination (dots stay visible).
    Touch screens and keyboards always see them. */
 @media (hover: hover) and (pointer: fine) {
-  .char-nav {
-    padding: calc(var(--u, 1vw) * 0.8) calc(var(--u, 1vw) * 1.5);
-  }
-
   .char-nav-btn {
     opacity: 0;
     transition: opacity 0.25s, transform 0.15s, filter 0.15s;
   }
 
-  .char-nav:hover .char-nav-btn:not(:disabled),
+  .screen-characters:hover .char-nav-btn:not(:disabled),
   .char-nav:focus-within .char-nav-btn:not(:disabled) {
     opacity: 1;
   }
 
-  .char-nav:hover .char-nav-btn:disabled,
+  .screen-characters:hover .char-nav-btn:disabled,
   .char-nav:focus-within .char-nav-btn:disabled {
     opacity: 0.25;
   }
@@ -273,28 +269,33 @@
   }
 
   .char-name {
-    font-size: clamp(3.5rem, 8.5cqw, 8rem);
+    font-size: clamp(3.92rem, 9.52cqw, 8.96rem);
     margin-bottom: clamp(6px, 1cqw, 14px);
   }
 
   .char-description {
-    font-size: clamp(1.05rem, 2cqw, 1.6rem);
+    font-size: clamp(1.18rem, 2.24cqw, 1.79rem);
     line-height: 1.35;
     letter-spacing: -0.005em;
   }
 
   /* ── Pagination ── */
+  /* The arrows sit at the left and right edges, vertically centred, like the comic reader.
+     The dots stay at the bottom. */
   .char-nav {
-    --arrow: calc(var(--u) * 2);
+    --arrow: calc(var(--u) * 2.4);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .char-dots {
     position: absolute;
     top: 86%;
     left: 50%;
     transform: translate(-50%, -50%);
-    gap: calc(var(--u) * 1.1);
-  }
-
-  .char-dots {
     gap: calc(var(--u) * 0.35);
+    pointer-events: auto;
   }
 
   .char-dot {
@@ -307,9 +308,16 @@
   }
 
   .char-nav-btn {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
     width: max(var(--arrow), 40px);
     height: max(var(--arrow), 40px);
+    pointer-events: auto;
   }
+
+  .char-prev-btn { left: clamp(4px, 1vw, 16px); }
+  .char-next-btn { right: clamp(4px, 1vw, 16px); }
 
   /* ── text-left (default, Bulan): text left, art grouped right ── */
   [data-layout="text-left"] .char-text {
@@ -341,7 +349,7 @@
   }
 
   [data-layout="text-right"] .char-name {
-    font-size: clamp(2.5rem, 6.5cqw, 8rem);
+    font-size: clamp(2.80rem, 7.28cqw, 8.96rem);
     white-space: nowrap;
     line-height: 1;
     margin-bottom: 0.68cqw;
@@ -376,20 +384,21 @@
   /* ── indung (Indung Tibuan): big croc center-bottom, water croc top-left, text top-right ── */
   [data-layout="indung"] .char-text {
     left: 62%;
-    top: 14.5%;
+    top: 11%;
     width: 30%;
   }
 
   [data-layout="indung"] .char-name {
-    font-size: clamp(2.5rem, 6.8cqw, 8rem);
+    font-size: clamp(2.80rem, 7.62cqw, 8.96rem);
     white-space: nowrap;
     line-height: 1;
     margin-bottom: 1.07cqw;
   }
 
   [data-layout="indung"] .char-description {
+    font-size: clamp(0.95rem, 1.45cqw, 1.7rem);
     line-height: 1.15;
-    width: 29cqw;
+    width: 25cqw;
   }
 
   [data-layout="indung"] .char-art-body {
@@ -408,22 +417,22 @@
 
   /* ── batala (Apung Batala): two birds left/center, text right ── */
   [data-layout="batala"] .char-text {
-    left: 72.5%;
-    top: 34%;
-    width: 24%;
+    left: 71.5%;
+    top: 30%;
+    width: 25%;
   }
 
   [data-layout="batala"] .char-name {
     white-space: nowrap;
     line-height: 1;
-    font-size: clamp(2.5rem, 5.2cqw, 6rem);
+    font-size: clamp(2.60rem, 5cqw, 6.2rem);
     margin-bottom: 0.84cqw;
   }
 
   [data-layout="batala"] .char-description {
-    font-size: clamp(0.9rem, 1.25cqw, 1.6rem);
+    font-size: clamp(1.05rem, 1.7cqw, 2rem);
     line-height: 1.15;
-    width: 24cqw;
+    width: 25cqw;
   }
 
   [data-layout="batala"] .char-art-face {
@@ -443,21 +452,22 @@
   /* ── mangacha (Apung Mangacha): whole spider center, head right, text bottom-left ── */
   [data-layout="mangacha"] .char-text {
     left: 5.4%;
-    top: 66.9%;
-    width: 32%;
+    top: 67%;
+    width: 38%;
     z-index: 3;
   }
 
   [data-layout="mangacha"] .char-name {
     white-space: nowrap;
     line-height: 1;
+    font-size: clamp(2.4rem, 5.2cqw, 6.2rem);
     margin-bottom: 0.84cqw;
   }
 
   [data-layout="mangacha"] .char-description {
-    font-size: clamp(0.9rem, 1.33cqw, 1.6rem);
+    font-size: clamp(1.05rem, 1.7cqw, 2rem);
     line-height: 1.15;
-    width: 31.5cqw;
+    width: 36cqw;
   }
 
   [data-layout="mangacha"] .char-art-body {
@@ -484,14 +494,14 @@
   [data-layout="sinukuan"] .char-name {
     white-space: nowrap;
     line-height: 1;
-    font-size: clamp(2.5rem, 4.5cqw, 6rem);
+    font-size: clamp(2.80rem, 5.04cqw, 6.72rem);
     margin-bottom: 0.84cqw;
   }
 
   [data-layout="sinukuan"] .char-description {
-    font-size: clamp(0.9rem, 1.15cqw, 1.6rem);
+    font-size: clamp(1.05rem, 1.6cqw, 2rem);
     line-height: 1.15;
-    width: 18cqw;
+    width: 23cqw;
   }
 
   [data-layout="sinukuan"] .char-art-body {
@@ -552,7 +562,7 @@
     left: max(5vw, 16px);
   }
 
-  .char-nav {
+  .char-dots {
     top: auto;
     bottom: calc(var(--bb) + 1.5dvh);
     transform: translateX(-50%);
@@ -711,14 +721,14 @@
   }
 
   .char-name {
-    font-size: clamp(1.75rem, 7.5vw, 3.5rem);
+    font-size: clamp(1.96rem, 8.40vw, 3.92rem);
     line-height: 1;
     text-wrap: balance;
     margin-bottom: 0.5rem;
   }
 
   .char-description {
-    font-size: clamp(0.95rem, 3.6vw, 1.4rem);
+    font-size: clamp(1.06rem, 4.03vw, 1.57rem);
     line-height: 1.3;
     text-wrap: pretty;
   }

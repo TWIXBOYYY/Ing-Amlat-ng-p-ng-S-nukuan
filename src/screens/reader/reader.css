@@ -35,10 +35,16 @@
   inset: 0;
 }
 
+/* The picture fills the whole screen (cropped a little to fit) */
 .reader-page-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--fit-w);
+  height: auto;
+  aspect-ratio: 1920 / 1165;
+  transform: translate(-50%, -50%);
+  object-fit: fill;
   display: block;
 }
 
@@ -47,13 +53,14 @@
 .reader-page-media {
   container-type: size;
   --video-ar: calc(1920 / 1165);
+  --fit-w: max(100cqw, calc(100cqh * var(--video-ar)));   /* cover */
 }
 
 .reader-caption-frame {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: max(100cqw, calc(100cqh * var(--video-ar)));   /* cover, like the video */
+  width: var(--fit-w);   /* same size as the video, so panels stay put on the artwork */
   aspect-ratio: 1920 / 1165;
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -230,9 +237,9 @@ span.reader-hud-btn-img img {
 }
 
 .reader-restart-label {
-  font-family: var(--font-heading);
-  font-size: clamp(11px, 1.7vmin, 17px);
-  font-weight: 700;
+  font-family: var(--font-mclaren);
+  font-size: clamp(12px, 1.9vmin, 19px);
+  font-weight: 400;
   color: #fff;
   letter-spacing: 0.03em;
   text-shadow: 0 1px 5px rgba(0,0,0,0.9);
@@ -367,6 +374,11 @@ span.reader-hud-btn-img img {
   }
 
   .is-video-page .reader-page-video {
+    position: static;
+    transform: none;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
     object-fit: contain;
   }
 
