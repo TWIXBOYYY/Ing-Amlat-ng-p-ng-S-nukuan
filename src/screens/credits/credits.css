@@ -1,5 +1,7 @@
 .screen-credits {
-  background: url('/assets/ui/BACKGROUND.png') center/cover no-repeat var(--color-parchment);
+  --credits-shadow: 0 2px 3px rgba(0,0,0,0.65), 0 0 14px rgba(8,10,35,0.55);
+  --color-credits-brown: #f6e9c8;   /* cream: the credits sit on the night background */
+  background: url('/assets/ui/credits-bg.webp') center/cover no-repeat #1d2450;
   /* display: flex applied by global.css when .active is present */
   flex-direction: column;
   align-items: center;
@@ -9,11 +11,12 @@
 }
 
 .credits-title {
-  font-family: var(--font-heading);
-  font-size: var(--fs-h2);
+  text-shadow: var(--credits-shadow);
+  font-family: var(--font-tribal);
+  font-size: clamp(2rem, 7vmin, 5rem);
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--color-navy);
+  color: var(--color-credits-brown);
   margin-bottom: clamp(12px, 2.5vmin, 36px);
   text-align: center;
 }
@@ -28,14 +31,15 @@
 }
 
 .credits-section-title {
-  font-family: var(--font-heading);
-  font-size: var(--fs-ui);
+  text-shadow: var(--credits-shadow);
+  font-family: var(--font-tribal);
+  font-size: clamp(1.1rem, 4.2vmin, 3rem);
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--color-gold-dark);
+  color: #e6bd55;
   text-transform: uppercase;
   margin-bottom: clamp(4px, 1vmin, 10px);
-  border-bottom: 1px solid rgba(158,126,26,0.35);
+  border-bottom: 1px solid rgba(230,189,85,0.45);
   padding-bottom: 6px;
 }
 
@@ -52,26 +56,32 @@
 }
 
 .credits-name {
-  font-family: var(--font-menu);
-  font-size: var(--fs-credits-name);
+  text-shadow: var(--credits-shadow);
+  font-family: var(--font-tribal);
+  font-size: clamp(1rem, 3.2vmin, 2.2rem);
   font-weight: 600;
-  color: var(--color-text-dark);
+  color: var(--color-credits-brown);
   letter-spacing: 0;
 }
 
 .credits-role {
-  font-family: var(--font-body);
-  font-size: var(--fs-ui);
-  color: var(--color-text-muted);
+  text-shadow: var(--credits-shadow);
+  font-family: var(--font-tribal);
+  font-size: clamp(0.75rem, 2.2vmin, 1.5rem);
+  color: #d3cbb8;
   margin-top: 0;
   line-height: 1.25;
 }
 
 .credits-footer {
-  margin-top: clamp(14px, 2.5vmin, 32px);
-  font-family: var(--font-heading);
-  font-size: var(--fs-ui);
-  color: var(--color-navy);
+  text-shadow: var(--credits-shadow);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  font-family: var(--font-tribal);
+  font-size: clamp(1.1rem, 3.6vmin, 2.6rem);
+  color: var(--color-credits-brown);
   letter-spacing: 0.04em;
   text-align: center;
   opacity: 0;

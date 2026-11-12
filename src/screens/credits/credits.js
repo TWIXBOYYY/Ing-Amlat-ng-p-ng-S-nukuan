@@ -29,7 +29,7 @@ const CREDITS_DATA = [
   {
     section: 'Audio',
     entries: [
-      { name: 'Name 3', role: 'Apùng Sinùkuan · Voice Actor & Narration'  },
+      { name: 'Julian Rey Reyes', role: 'Apùng Sinùkuan · Voice Actor & Narration'  },
       { name: 'Name 4', role: 'Apùng Panàbang · Voice Actor & Narration'  },
     ],
   },

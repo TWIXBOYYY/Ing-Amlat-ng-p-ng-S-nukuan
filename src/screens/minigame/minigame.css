@@ -1,7 +1,7 @@
 .screen-minigame {
   --stage-w: min(100vw, calc(100dvh * 704 / 397));   /* Figma frame is 704 x 397 */
-  --paper: url('/assets/ui/background minigame.png');
-  background: #413f6a;
+  --paper: url('/assets/ui/minigame-paper.webp');
+  background: #d9c9a0 url('/assets/ui/minigame-bg.webp') center/cover no-repeat;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -14,7 +14,7 @@
 .mg-title {
   font-family: var(--font-settings);
   font-weight: 800;
-  color: #000;
+  color: #fff;
   text-transform: uppercase;
   white-space: nowrap;
   line-height: 1;
@@ -24,7 +24,7 @@
 .mg-subtitle {
   font-family: var(--font-settings);
   font-weight: 400;
-  color: #111;
+  color: #fff;
   white-space: nowrap;
   line-height: 1;
   margin: 0;
@@ -344,24 +344,24 @@ body.mg-is-dragging * { cursor: grabbing !important; }
 
   .mg-home-btn {
     position: absolute;
-    left: 5.1%;
-    top: 6.3%;
-    width: 5.8%;
+    left: 7.6%;
+    top: 10.5%;
+    width: 5.2%;
     aspect-ratio: 1.24;
   }
 
   .mg-title {
     position: absolute;
-    left: 50%;
-    top: 11.1%;
+    left: 49.4%;
+    top: 13.1%;
     transform: translate(-50%, -50%);
     font-size: max(2.58cqw, 18px);
   }
 
   .mg-subtitle {
     position: absolute;
-    left: 50%;
-    top: 16.4%;
+    left: 49.4%;
+    top: 17.7%;
     transform: translate(-50%, -50%);
     font-size: max(1.57cqw, 12px);
   }

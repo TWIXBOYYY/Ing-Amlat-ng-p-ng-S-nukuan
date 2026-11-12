@@ -36,7 +36,7 @@
  */
 
 /**
- * @typedef {string|{src:string,startSeconds?:number,maxSeconds?:number}} Clip
+ * @typedef {string|{src:string,startSeconds?:number,maxSeconds?:number,pauseSeconds?:number}} Clip
  */
 
 /**
@@ -190,13 +190,46 @@ export const pages = [
   },
   {
     id: 'page-04',
-    image: '/assets/comic/page-04.webp',
-    alt: 'A young Kapampangan explorer discovers a glowing artifact half-buried in the forest floor.',
+    video: '/assets/comic/s1p4/S1P4 Motion.mp4',
+    alt: 'Long ago, it fell down...',
     music:    '/assets/audio/music/theme-mystery.mp3',
-    ambience: '/assets/audio/ambience/forest-night.mp3',
-    narration: '/assets/audio/narration/page-04.mp3',
-    sfx: [
-      { src: '/assets/audio/sfx/artifact-glow.mp3', on: 'enter' },
+    ambience: null,
+    // Clip 1 plays from 1s to 12s (11s). Clip 2 skips 0.5s of lead-in (~2.9s). Clip 3 follows after a 1s pause.
+    narration: [
+      { src: '/assets/narration/s1p4/S1-P4-PANEL1-NARRATOR-002.wav', startSeconds: 1, maxSeconds: 12 },
+      // the voice in 003 and PANEL2-001 starts ~1.0s into the file; each clip opens 0.1s before it
+      { src: '/assets/narration/s1p4/S1-P4-PANEL1-NARRATOR-003.wav', startSeconds: 0.9, maxSeconds: 2.6, pauseSeconds: 0.9 },   // voice at 0:12
+      { src: '/assets/narration/s1p4/S1-P4-PANEL2-NARRATOR-001.wav', startSeconds: 0.9, maxSeconds: 12.39, pauseSeconds: 0.8 },  // 1s of silence after "It fell down", voice at ~0:14.5
+    ],
+    advanceAfter: 3,
+    videoSeconds: 27.5,        // narration ends at ~25.9s
+    captions: [
+      {
+        src: '/assets/comic/s1p4/S1_P4-2.2 (Long ago).webp',
+        alt: 'Long ago...',
+        at: { x: 18.3, y: 12 },     // top of the needle panel
+        scale: 0.8,
+        voiceAt: 0.3,
+        fallbackAt: 0.3,
+      },
+      {
+        src: '/assets/comic/s1p4/S1_P4-2.2 (It fell down).webp',
+        alt: '...it fell down.',
+        at: { x: 17.9, y: 88.5 },     // bottom of the needle panel
+        scale: 0.7,
+        voiceAt: 0.1,        // shows as its voice starts, 0:12
+        fallbackAt: 12,
+        replaces: [0],        // the first box goes away when this one appears
+      },
+      {
+        src: '/assets/comic/s1p4/S1_P4-2.3 (Landing right on).webp',
+        alt: 'Landing right on...',
+        at: { x: 68.7, y: 19.6 },     // open sky at upper right
+        scale: 1,
+        voiceAt: 0.1,         // ~0:14.5
+        fallbackAt: 14.5,
+        replaces: [1],
+      },
     ],
   },
   {

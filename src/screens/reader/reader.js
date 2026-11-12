@@ -39,7 +39,7 @@ function buildPageEl(page, index) {
                preload="${index === 0 ? 'auto' : 'metadata'}" aria-label="${page.alt || `Page ${index + 1}`}"></video>
         <div class="reader-caption-frame">
           ${(page.captions || []).map(c => `
-            <div class="reader-caption" data-at-x="${c.at.x}" data-at-y="${c.at.y}">
+            <div class="reader-caption" data-at-x="${c.at.x}" data-at-y="${c.at.y}" data-scale="${c.scale ?? 1}">
               <img class="reader-page-caption" src="${encodeURI(c.src)}" alt="${c.alt}" draggable="false" decoding="async">
             </div>`).join('')}
         </div>
@@ -396,11 +396,14 @@ function layoutCaptions(pe) {
     const img = wrap.firstElementChild;
     if (!img?.naturalWidth) return;                    // not loaded yet; laid out again once decoded
     const p = measurePanel(img);
-    const ax = Number(wrap.dataset.atX), ay = Number(wrap.dataset.atY);
-    const left = fr.left + (ax - p.w / 2) / 100 * fr.width;
-    const top = fr.top + (ay - p.h / 2) / 100 * fr.height;
-    const nx = nudge(left, left + p.w / 100 * fr.width, mr.left + mx, mr.right - mx);
-    const ny = nudge(top, top + p.h / 100 * fr.height, mr.top + my, mr.bottom - my);
+    const ax = Number(wrap.dataset.atX), ay = Number(wrap.dataset.atY), k = Number(wrap.dataset.scale) || 1;
+    const pw = p.w * k, ph = p.h * k;                   // size on screen, after the optional shrink
+    const left = fr.left + (ax - pw / 2) / 100 * fr.width;
+    const top = fr.top + (ay - ph / 2) / 100 * fr.height;
+    const nx = nudge(left, left + pw / 100 * fr.width, mr.left + mx, mr.right - mx);
+    const ny = nudge(top, top + ph / 100 * fr.height, mr.top + my, mr.bottom - my);
+    wrap.style.transformOrigin = `${p.cx}% ${p.cy}%`;   // shrink around the panel's own centre
+    wrap.style.scale = k === 1 ? '' : String(k);
     // percentages are of the frame (the wrapper is frame-sized), then the px nudge
     wrap.style.translate = `calc(${(ax - p.cx).toFixed(3)}% + ${nx.toFixed(1)}px) calc(${(ay - p.cy).toFixed(3)}% + ${ny.toFixed(1)}px)`;
   });

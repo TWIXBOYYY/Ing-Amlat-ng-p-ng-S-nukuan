@@ -9,10 +9,10 @@
 }
 
 .loading-label {
-  font-family: var(--font-heading);
-  font-size: var(--fs-display);
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-family: var(--font-tribal);
+  font-size: calc(var(--fs-display) * 1.7);
+  font-weight: 400;
+  letter-spacing: 0.12em;
   color: #e8dfc0;
   text-shadow: 0 0 24px rgba(201,162,39,0.5);
   opacity: 0;
@@ -84,4 +84,10 @@
   box-shadow: 0 0 12px rgba(255,220,80,0.55);
   border-radius: 3px;
   transition: width 0.25s ease;
+}
+
+/* The start screen is the day scene: the pale label needs to be dark to read on the light sky */
+.screen-loading:not(.screen-minigame-loading) .loading-label {
+  color: #2a3a2f;
+  text-shadow: 0 0 18px rgba(255,255,255,0.7);
 }

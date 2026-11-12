@@ -157,6 +157,7 @@ export const AudioManager = {
   /**
    * One clip, or a list played back to back. A clip is a path, or an object:
    *   { src, startSeconds?, maxSeconds? } plays the part of the file from startSeconds up to maxSeconds
+   *   pauseSeconds adds that much silence before the clip (not the first one).
    *   (use it to skip leading silence or cut a tail). A clip with maxSeconds fades out over its
    *   last moment instead of stopping dead. startSeconds needs maxSeconds.
    * Every clip is loaded up front, so the next one starts the instant the previous one ends.
@@ -192,6 +193,12 @@ export const AudioManager = {
     function playAt(i) {
       if (token !== _narrationToken) return;
       if (i >= howls.length) { if (howls.length) onEnd?.(); return; }
+      const gap = (list[i].pauseSeconds || 0) * 1000;   // silence before this clip (not before the first)
+      if (gap && i > 0 && !playAt._gapDone?.[i]) {
+        (playAt._gapDone ||= {})[i] = true;
+        setTimeout(() => playAt(i), gap);
+        return;
+      }
       _narration = howls[i];
       _narration.volume(eff('narration'));
       if (unlocked) _narration.play();   // otherwise unlock() starts it

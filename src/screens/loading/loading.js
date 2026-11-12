@@ -3,10 +3,14 @@ import { navigate } from '../../utils/router.js';
 import { addParallaxLayers, startParallax } from '../../utils/parallax-bg.js';
 
 
-export function createLoadingScreen() {
+const DAY_BG   = '/assets/ui/MT.ALAYA_DAY.webp';
+const NIGHT_BG = '/assets/ui/MT.ALAYA_DAY__NIGHT.webp';
+
+/** The sun + LOADING... + progress bar over a parallax mountain. Day for the start, night for the minigame. */
+export function buildLoadingScreen({ bg, className, screen }) {
   const el = document.createElement('div');
-  el.className = 'screen screen-loading';
-  el.dataset.screen = '#loading';
+  el.className = `screen screen-loading ${className}`.trim();
+  el.dataset.screen = screen;
 
   el.innerHTML = `
     <p class="loading-label" role="status" aria-live="polite" aria-atomic="true">LOADING...</p>
@@ -20,16 +24,23 @@ export function createLoadingScreen() {
     </div>
   `;
 
-  // Starts fetching the night background while the splash is still showing
-  addParallaxLayers(el, [{ src: '/assets/ui/MT.ALAYA_DAY__NIGHT.webp', depth: 0.35, y: 1.6 }]);
-  // The home screen's layers load while the loading screen plays
-  ['bg', 'clouds', 'ayala', 'ground'].forEach(n => { new Image().src = `/assets/ui/layer-${n}.webp`; });
-
+  addParallaxLayers(el, [{ src: bg, depth: 0.35, y: 1.6 }]);   // starts fetching now
   return el;
 }
 
+export function createLoadingScreen() {
+  const el = buildLoadingScreen({ bg: DAY_BG, className: '', screen: '#loading' });
+  // The home screen's layers load while the loading screen plays
+  ['bg', 'clouds', 'ayala', 'ground'].forEach(n => { new Image().src = `/assets/ui/layer-${n}.webp`; });
+  return el;
+}
+
+export function createMinigameLoadingScreen() {
+  return buildLoadingScreen({ bg: NIGHT_BG, className: 'screen-minigame-loading', screen: '#minigame-loading' });
+}
+
 /** @param {HTMLElement} el */
-export function mountLoading(el) {
+export function mountLoading(el, { duration = 1.6, onDone = () => navigate('#home'), fadeOut = true } = {}) {
   el._stopParallax?.();
   el._stopParallax = startParallax(el);
 
@@ -59,12 +70,12 @@ export function mountLoading(el) {
 
   if (criticalAssets.length === 0) {
     // No real assets yet — simulate a short timed load
-    gsap.to({ v: 0 }, {
+    el._loadTween = gsap.to({ v: 0 }, {
       v: 100,
-      duration: 1.6,
+      duration,
       ease: 'power1.inOut',
       onUpdate() { setProgress(this.targets()[0].v); },
-      onComplete() { finish(el); },
+      onComplete() { finish(el, onDone, fadeOut); },
     });
   } else {
     let done = 0;
@@ -73,20 +84,16 @@ export function mountLoading(el) {
       img.onload = img.onerror = () => {
         done++;
         setProgress((done / criticalAssets.length) * 100);
-        if (done === criticalAssets.length) finish(el);
+        if (done === criticalAssets.length) finish(el, onDone, fadeOut);
       };
       img.src = src;
     });
   }
 }
 
-function finish(el) {
-  setTimeout(() => {
-    gsap.to(el, {
-      opacity: 0,
-      duration: 0.75,
-      ease: 'power2.inOut',
-      onComplete: () => navigate('#home'),
-    });
+function finish(el, onDone, fadeOut) {
+  el._finishTimer = setTimeout(() => {
+    if (!fadeOut) { onDone(); return; }
+    gsap.to(el, { opacity: 0, duration: 0.75, ease: 'power2.inOut', onComplete: onDone });
   }, 350);
 }

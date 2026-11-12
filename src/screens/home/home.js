@@ -11,19 +11,10 @@ export function createHomeScreen() {
   el.dataset.screen = '#home';
 
   el.innerHTML = `
-    <!-- Background layers (replace divs with <img> tags when real art arrives) -->
-    <div class="home-layer home-sky"           data-depth="0"    aria-hidden="true"></div>
-    <div class="home-layer home-clouds-left"   data-depth="0.08" aria-hidden="true"></div>
-    <div class="home-layer home-clouds-right"  data-depth="0.08" aria-hidden="true"></div>
-    <div class="home-mountain-bg"              data-depth="0.06" aria-hidden="true"></div>
-    <div class="home-mountain-mid-l"                             aria-hidden="true"></div>
-    <div class="home-mountain-mid-r"                             aria-hidden="true"></div>
-    <div class="home-layer home-ground"        data-depth="0.14" aria-hidden="true"></div>
-
     <!-- Title -->
     <div class="home-title-block" aria-label="Ing Amlat ng Ápûng Sinukuan">
       <img src="/assets/ui/Homepage Text .png" class="home-title-img" alt="Ing Amlat ng Ápûng Sinukuan" draggable="false"/>
-      <img src="/assets/ui/A World Woven, A Legacy Awakened.png" class="home-tagline-img" alt="A World Woven, A Legacy Awakened" draggable="false"/>
+      <p class="home-tagline">Where Mt. Alaya Myths Come Alive</p>
     </div>
 
     <!-- Main menu -->
@@ -49,7 +40,7 @@ export function createHomeScreen() {
 
   // Back to front. Nearer layers move more; the mountain barely moves (mostly up/down).
   addParallaxLayers(el, [
-    { src: '/assets/ui/layer-bg.webp',     depth: 0.5 },
+    { src: '/assets/ui/layer-blue-bg.webp', depth: 0.5 },
     { src: '/assets/ui/layer-clouds.webp', depth: 1.4, y: 1.4, drift: 1.2 },
     { src: '/assets/ui/layer-ayala.webp',  depth: 0.3, y: 1.8 },
     // Same vertical travel as the mountain (0.3 * 1.8 = 0.8 * 0.675) so no gap can open at the seam
