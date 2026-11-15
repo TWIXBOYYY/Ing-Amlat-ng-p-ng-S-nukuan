@@ -34,7 +34,7 @@ function buildPageEl(page, index) {
   if (page.video) {
     el.classList.add('reader-page--video');
     el.innerHTML = `
-      <div class="reader-page-media">
+      <div class="reader-page-media"${page.videoAspect ? ` style="--video-ar:${page.videoAspect}${page.videoFocusY != null ? `;--focus-y:${page.videoFocusY}` : ''}"` : ''}>
         <video class="reader-page-video" src="${encodeURI(page.video)}" muted ${page.advanceAfter == null ? 'loop' : ''} playsinline
                preload="${index === 0 ? 'auto' : 'metadata'}" aria-label="${page.alt || `Page ${index + 1}`}"></video>
         <div class="reader-caption-frame">

@@ -1,7 +1,7 @@
 .screen-credits {
-  --credits-shadow: 0 2px 3px rgba(0,0,0,0.65), 0 0 14px rgba(8,10,35,0.55);
-  --color-credits-brown: #f6e9c8;   /* cream: the credits sit on the night background */
-  background: url('/assets/ui/credits-bg.webp') center/cover no-repeat #1d2450;
+  --credits-shadow: 0 2px 3px rgba(60,35,10,0.28);
+  --color-credits-brown: #4a2a12;   /* dark brown on the parchment */
+  background: url('/assets/ui/BACKGROUND.png') center/cover no-repeat var(--color-parchment);
   /* display: flex applied by global.css when .active is present */
   flex-direction: column;
   align-items: center;
@@ -36,10 +36,10 @@
   font-size: clamp(1.1rem, 4.2vmin, 3rem);
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: #e6bd55;
+  color: #8a5a1c;
   text-transform: uppercase;
   margin-bottom: clamp(4px, 1vmin, 10px);
-  border-bottom: 1px solid rgba(230,189,85,0.45);
+  border-bottom: 1px solid rgba(110,70,25,0.45);
   padding-bottom: 6px;
 }
 
@@ -66,9 +66,9 @@
 
 .credits-role {
   text-shadow: var(--credits-shadow);
-  font-family: var(--font-tribal);
+  font-family: var(--font-mclaren);
   font-size: clamp(0.75rem, 2.2vmin, 1.5rem);
-  color: #d3cbb8;
+  color: #6b4a2b;
   margin-top: 0;
   line-height: 1.25;
 }

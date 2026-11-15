@@ -269,12 +269,12 @@
   }
 
   .char-name {
-    font-size: clamp(3.92rem, 9.52cqw, 8.96rem);
+    font-size: clamp(2.4rem, 5.2cqw, 6.2rem);
     margin-bottom: clamp(6px, 1cqw, 14px);
   }
 
   .char-description {
-    font-size: clamp(1.18rem, 2.24cqw, 1.79rem);
+    font-size: clamp(1.05rem, 1.6cqw, 2rem);
     line-height: 1.35;
     letter-spacing: -0.005em;
   }
@@ -349,7 +349,7 @@
   }
 
   [data-layout="text-right"] .char-name {
-    font-size: clamp(2.80rem, 7.28cqw, 8.96rem);
+    font-size: clamp(2.4rem, 5.2cqw, 6.2rem);
     white-space: nowrap;
     line-height: 1;
     margin-bottom: 0.68cqw;
@@ -389,14 +389,14 @@
   }
 
   [data-layout="indung"] .char-name {
-    font-size: clamp(2.80rem, 7.62cqw, 8.96rem);
+    font-size: clamp(2.4rem, 5.2cqw, 6.2rem);
     white-space: nowrap;
     line-height: 1;
     margin-bottom: 1.07cqw;
   }
 
   [data-layout="indung"] .char-description {
-    font-size: clamp(0.95rem, 1.45cqw, 1.7rem);
+    font-size: clamp(1.05rem, 1.6cqw, 2rem);
     line-height: 1.15;
     width: 25cqw;
   }
@@ -425,12 +425,12 @@
   [data-layout="batala"] .char-name {
     white-space: nowrap;
     line-height: 1;
-    font-size: clamp(2.60rem, 5cqw, 6.2rem);
+    font-size: clamp(2.4rem, 5.2cqw, 6.2rem);
     margin-bottom: 0.84cqw;
   }
 
   [data-layout="batala"] .char-description {
-    font-size: clamp(1.05rem, 1.7cqw, 2rem);
+    font-size: clamp(1.05rem, 1.6cqw, 2rem);
     line-height: 1.15;
     width: 25cqw;
   }
@@ -451,7 +451,7 @@
 
   /* ── mangacha (Apung Mangacha): whole spider center, head right, text bottom-left ── */
   [data-layout="mangacha"] .char-text {
-    left: 5.4%;
+    left: 3.4%;
     top: 67%;
     width: 38%;
     z-index: 3;
@@ -465,7 +465,7 @@
   }
 
   [data-layout="mangacha"] .char-description {
-    font-size: clamp(1.05rem, 1.7cqw, 2rem);
+    font-size: clamp(1.05rem, 1.6cqw, 2rem);
     line-height: 1.15;
     width: 36cqw;
   }
@@ -494,7 +494,7 @@
   [data-layout="sinukuan"] .char-name {
     white-space: nowrap;
     line-height: 1;
-    font-size: clamp(2.80rem, 5.04cqw, 6.72rem);
+    font-size: clamp(2.4rem, 5.2cqw, 6.2rem);
     margin-bottom: 0.84cqw;
   }
 

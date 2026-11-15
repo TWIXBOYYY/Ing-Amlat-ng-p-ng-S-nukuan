@@ -8,7 +8,7 @@ export function createAboutScreen() {
 
   el.innerHTML = `
     <div class="about-image-wrap">
-      <img class="about-image loaded" src="/assets/ui/awkward dog.jpg" alt="Áyup Production team" />
+      <img class="about-image loaded" src="/assets/ui/about-team.webp" alt="Áyup Production team" />
     </div>
 
     <div class="about-text">

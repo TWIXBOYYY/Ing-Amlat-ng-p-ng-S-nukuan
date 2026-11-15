@@ -12,8 +12,8 @@
 .mg-title-wrap { display: contents; }
 
 .mg-title {
-  font-family: var(--font-settings);
-  font-weight: 800;
+  font-family: var(--font-tribal);
+  font-weight: 400;
   color: #fff;
   text-transform: uppercase;
   white-space: nowrap;
@@ -22,7 +22,7 @@
 }
 
 .mg-subtitle {
-  font-family: var(--font-settings);
+  font-family: var(--font-mclaren);
   font-weight: 400;
   color: #fff;
   white-space: nowrap;
@@ -102,7 +102,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-settings);
+  font-family: var(--font-mclaren);
   color: #111;
   text-align: center;
   white-space: nowrap;
@@ -136,7 +136,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-settings);
+  font-family: var(--font-mclaren);
   color: #111;
   text-align: center;
   white-space: nowrap;
@@ -194,7 +194,7 @@ body.mg-is-dragging * { cursor: grabbing !important; }
   background: #fff;
   border: 1px solid #3a3a3a;
   border-radius: var(--gr);
-  font-family: var(--font-settings);
+  font-family: var(--font-mclaren);
   font-size: var(--gf);
   color: #111;
   white-space: nowrap;
@@ -275,7 +275,7 @@ body.mg-is-dragging * { cursor: grabbing !important; }
   margin: 0;
   display: flex;
   align-items: baseline;
-  font-family: var(--font-settings);
+  font-family: var(--font-mclaren);
   font-size: 6.5cqw;            /* the "/6" */
   line-height: 1;
   color: #fff;
@@ -300,7 +300,7 @@ body.mg-is-dragging * { cursor: grabbing !important; }
   background: url('/assets/ui/SHORT LENGTH.png') center/100% 100% no-repeat;
   border: none;
   padding: 0;
-  font-family: var(--font-settings);
+  font-family: var(--font-mclaren);
   font-size: 4.4cqw;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
@@ -355,7 +355,7 @@ body.mg-is-dragging * { cursor: grabbing !important; }
     left: 49.4%;
     top: 13.1%;
     transform: translate(-50%, -50%);
-    font-size: max(2.58cqw, 18px);
+    font-size: max(2.9cqw, 19px);
   }
 
   .mg-subtitle {

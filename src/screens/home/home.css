@@ -19,7 +19,7 @@
 }
 
 .home-title-img {
-  width: min(clamp(320px, 46vw, 900px), 76vh);   /* never taller than about half the screen */
+  width: min(clamp(320px, 52vw, 960px), 84vh);   /* never taller than about 55% of the screen */
   height: auto;
   display: block;
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
@@ -28,7 +28,7 @@
 .home-tagline {
   margin: clamp(2px, 0.5vmin, 8px) 0 0;
   font-family: var(--font-title);
-  font-size: clamp(1rem, 1.9vw, 2.1rem);
+  font-size: clamp(0.85rem, 1.5vw, 1.7rem);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -39,7 +39,7 @@
 /* ── Menu ── */
 .home-menu {
   position: absolute;
-  top: 58%;
+  top: 64%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -54,7 +54,7 @@
   font-size: clamp(1.4rem, 4.4vmin, 3.2rem);
   font-weight: 400;
   color: var(--color-white);
-  letter-spacing: 0.03em;
+  letter-spacing: -0.02em;
   font-kerning: normal;
   font-feature-settings: 'kern' 1;
   padding: 6px 28px;

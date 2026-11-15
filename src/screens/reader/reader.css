@@ -42,7 +42,7 @@
   top: 50%;
   width: var(--fit-w);
   height: auto;
-  aspect-ratio: 1920 / 1165;
+  aspect-ratio: var(--video-ar);
   transform: translate(-50%, -50%);
   object-fit: fill;
   display: block;
@@ -61,7 +61,7 @@
   left: 50%;
   top: 50%;
   width: var(--fit-w);   /* same size as the video, so panels stay put on the artwork */
-  aspect-ratio: 1920 / 1165;
+  aspect-ratio: var(--video-ar);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -359,6 +359,16 @@ span.reader-hud-btn-img img {
   transition: width 0.4s ease;
   pointer-events: none;
   z-index: 1;
+}
+
+/* Landscape: a page can choose which part of a tall picture stays in view when the screen is wider than it
+   (--focus-y: 0 = keep the top, 1 = keep the bottom, default .5 = centre; see videoFocusY in story.js) */
+@media (orientation: landscape) and (min-width: 521px) {
+  .reader-page-video,
+  .reader-caption-frame {
+    top: calc((100cqh - var(--fit-w) / var(--video-ar)) * var(--focus-y, 0.5));
+    transform: translateX(-50%);
+  }
 }
 
 /* ── Portrait / narrow-screen adjustments ── */

@@ -11,6 +11,8 @@
  *  ───────────────
  *  id          {string}       Unique slug, e.g. "page-06"
  *  image       {string}       Path from /public root, e.g. "/assets/comic/page-06.webp"
+ *  videoAspect {number}       width / height of the video file (default 1920/1165); sets how it is cropped/fitted
+ *  videoFocusY {number}       0..1, which part of a tall video stays in view on wide screens (0 top, 1 bottom, default .5)
  *  video       {string}       Optional motion video (MP4) shown instead of the image + layers;
  *                             it loops muted and is kept clear of the on-screen buttons
  *  alt         {string}       Accessibility description of the page
@@ -62,6 +64,8 @@
  * @property {string}       id
  * @property {string}       image
  * @property {string}       [video]
+ * @property {number}       [videoAspect]
+ * @property {number}       [videoFocusY]
  * @property {string}       [alt]
  * @property {PageLayer[]}  [layers]
  * @property {Clip|Clip[]} [narration]
@@ -234,24 +238,28 @@ export const pages = [
   },
   {
     id: 'page-05',
-    image: '/assets/comic/page-05.webp',
-    alt: 'Sinukuan materialises from the mist, extending a hand — an invitation, or a warning?',
+    video: '/assets/comic/S2P1/S2-P1 Motion Finall.mp4',
+    videoAspect: 1920 / 1165,   // the file's own shape, so it is cropped to fill the screen (landscape) or shown whole (portrait)
+    alt: 'Season 2, page 1 — motion graphic.',
     music:    '/assets/audio/music/theme-mystery.mp3',
-    ambience: '/assets/audio/ambience/wind-mountain.mp3',
-    narration: '/assets/audio/narration/page-05.mp3',
-    sfx: [
-      { src: '/assets/audio/sfx/thunder-low.mp3', on: 'enter' },
-    ],
+    ambience: null,
   },
   {
     id: 'page-06',
-    image: '/assets/comic/page-06.webp',
-    alt: 'Page 6 — art coming soon.',
+    video: '/assets/comic/S2P2/S2P2 Motion Final.mp4',
+    videoAspect: 1920 / 1080,   // the file's own shape, so it is cropped to fill the screen (landscape) or shown whole (portrait)
+    alt: 'Season 2, page 2 — motion graphic.',
+    music:    '/assets/audio/music/theme-mystery.mp3',
+    ambience: null,
   },
   {
     id: 'page-07',
-    image: '/assets/comic/page-07.webp',
-    alt: 'Page 7 — art coming soon.',
+    video: '/assets/comic/S2P3/S2-P3.mp4',
+    videoFocusY: 0.18,          // keep the sun and moon at the top in view on wide screens
+    videoAspect: 4200 / 3244,   // the file's own shape, so it is cropped to fill the screen (landscape) or shown whole (portrait)
+    alt: 'Season 2, page 3 — motion graphic.',
+    music:    '/assets/audio/music/theme-mystery.mp3',
+    ambience: null,
   },
   {
     id: 'page-08',

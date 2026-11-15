@@ -125,7 +125,7 @@ button {
 }
 
 .screen-back-label {
-  font-family: var(--font-heading);
+  font-family: var(--font-tribal);
   font-size: calc(var(--back-h) * 0.32);
   font-weight: 700;
   color: #fff;
