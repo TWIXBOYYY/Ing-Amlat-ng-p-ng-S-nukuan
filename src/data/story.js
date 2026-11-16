@@ -255,8 +255,7 @@ export const pages = [
   {
     id: 'page-07',
     video: '/assets/comic/S2P3/S2-P3.mp4',
-    videoFocusY: 0.18,          // keep the sun and moon at the top in view on wide screens
-    videoAspect: 4200 / 3244,   // the file's own shape, so it is cropped to fill the screen (landscape) or shown whole (portrait)
+    videoAspect: 1920 / 1080,   // natural 16:9 size; fills the screen on landscape, shown whole in portrait
     alt: 'Season 2, page 3 — motion graphic.',
     music:    '/assets/audio/music/theme-mystery.mp3',
     ambience: null,
