@@ -1,4 +1,5 @@
 import { AudioManager } from '../../audio/AudioManager.js';
+import { LANGUAGES, getLanguage, setLanguage } from '../../utils/language.js';
 
 const CHANNELS = [
   { key: 'master',    label: 'Master Volume'        },
@@ -83,6 +84,10 @@ export function createSettingsOverlay() {
       <div class="settings-sliders">
         ${CHANNELS.map(buildRow).join('')}
       </div>
+      <div class="settings-language" role="group" aria-label="Story language">
+        <span class="settings-row-label">Language</span>
+        ${LANGUAGES.map(l => `<button type="button" class="settings-lang-btn${l.code === getLanguage() ? ' active' : ''}" data-lang="${l.code}" aria-pressed="${l.code === getLanguage()}">${l.label}</button>`).join('')}
+      </div>
     </div>`;
 
   // Close on backdrop click
@@ -91,6 +96,17 @@ export function createSettingsOverlay() {
   // Esc key
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && _overlay.classList.contains('open')) hideSettings();
+  });
+
+  _overlay.querySelectorAll('.settings-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setLanguage(btn.dataset.lang);
+      _overlay.querySelectorAll('.settings-lang-btn').forEach(b => {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+    });
   });
 
   // Wire sliders and mute buttons

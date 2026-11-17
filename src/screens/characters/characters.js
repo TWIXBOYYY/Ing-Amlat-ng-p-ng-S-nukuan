@@ -1,5 +1,8 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
+import { AudioManager } from '../../audio/AudioManager.js';
+
+const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/Turn a page.mp3');
 
 const CHARACTERS = [
   {
@@ -35,8 +38,8 @@ const CHARACTERS = [
     subtitle: 'Kingfisher of the Sky',
     description: 'The blue feathered Kingfisher who originally rules the sky. His feathers makes the sky blue.\n\nHe earns the name «Salaksak» for his courageous act when he bravely entered Indung Tíbúan\'s mouth and pecked at the flesh, causing for him to be swallowed.',
     layout: 'batala',
-    artLeft: '/assets/characters ui/Apung Batala/Apung Batala Whole.png',
-    artRight: '/assets/characters ui/Apung Batala/Apung Batala Left.png',
+    artLeft: null,
+    artRight: '/assets/characters ui/Apung Batala/Batala.png',
   },
   {
     id: 'apung-mangacha',
@@ -216,6 +219,7 @@ export function mountCharacters(el) {
     if (index < 0 || index > CHARACTERS.length - 1 || index === el._current) return;
     const direction = index > el._current ? 1 : -1;
     el._current = index;
+    AudioManager.playSfx(PAGE_TURN_SFX);
     showCharacter(index, direction);
   }
 

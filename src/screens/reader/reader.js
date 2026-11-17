@@ -3,8 +3,22 @@ import { navigate } from '../../utils/router.js';
 import { AudioManager } from '../../audio/AudioManager.js';
 import { toggleSettings } from '../../components/settings/settings.js';
 import { pages } from '../../data/story.js';
+import { captionSrc } from '../../utils/language.js';
 
 const PRELOAD_AHEAD = 2;
+
+// Swap caption artwork when the story language changes
+document.addEventListener('language:change', () => {
+  pageEls.forEach((pe, i) => {
+    pe.querySelectorAll('.reader-page-caption').forEach(img => {
+      const c = pages[i]?.captions?.[Number(img.dataset.captionIndex)];
+      if (!c) return;
+      img._panel = null;                                   // the new picture has its own measurements
+      img.addEventListener('load', () => layoutCaptions(pe), { once: true });
+      img.src = encodeURI(captionSrc(c));
+    });
+  });
+});
 
 const AUTOPLAY_INTERVAL_MS = 6000;
 const HUD_IDLE_MS = 2500;
@@ -38,9 +52,9 @@ function buildPageEl(page, index) {
         <video class="reader-page-video" src="${encodeURI(page.video)}" muted ${page.advanceAfter == null ? 'loop' : ''} playsinline
                preload="${index === 0 ? 'auto' : 'metadata'}" aria-label="${page.alt || `Page ${index + 1}`}"></video>
         <div class="reader-caption-frame">
-          ${(page.captions || []).map(c => `
+          ${(page.captions || []).map((c, i) => `
             <div class="reader-caption" data-at-x="${c.at.x}" data-at-y="${c.at.y}" data-scale="${c.scale ?? 1}">
-              <img class="reader-page-caption" src="${encodeURI(c.src)}" alt="${c.alt}" draggable="false" decoding="async">
+              <img class="reader-page-caption" src="${encodeURI(captionSrc(c))}" alt="${c.alt}" data-caption-index="${i}" draggable="false" decoding="async">
             </div>`).join('')}
         </div>
       </div>`;

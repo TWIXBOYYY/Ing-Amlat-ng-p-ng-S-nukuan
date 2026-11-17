@@ -95,14 +95,16 @@ export const pages = [
     advanceAfter: 3,
     captions: [
       {
-        src: '/assets/comic/S1/S1_P1 (In the beginning).webp',
+        src: '/assets/comic/S1/English/ENG_IN THE BEGINNING.webp',
+        srcByLang: { pam: '/assets/comic/S1/Pampanga/PAM_IN THE BEGINNING.webp' },
         alt: 'In the beginning of the world, a great giant spider named Apung Mangacha wove a dome called the "Sikluban."',
         at: { x: 11.81, y: 50.47 },
         voiceAt: 0.2,
         fallbackAt: 0.6,
       },
       {
-        src: '/assets/comic/S1/S1_P1 (The bottom of the dome).webp',
+        src: '/assets/comic/S1/English/ENG_BOTTOM OF THE DOME.webp',
+        srcByLang: { pam: '/assets/comic/S1/Pampanga/PAM_BOTTOM OF THE DOME.webp' },
         alt: 'The bottom of the dome, the Suklob, was tightly woven and filled with water. Meanwhile, the top was loosely knit and had holes as the great spider ran out of silk.',
         at: { x: 83.77, y: 52.99 },
         voiceAt: 0.8,
@@ -127,14 +129,16 @@ export const pages = [
     // Narration clip 1 reads the "Through the holes" box, clip 2 reads the "Sikluban" box
     captions: [
       {
-        src: '/assets/comic/S1p2/S1_P2 (Through the holes).webp',
+        src: '/assets/comic/S1p2/English/ENG_Through the holes.webp',
+        srcByLang: { pam: '/assets/comic/S1p2/Pampanga/PAM_Through the holes.webp' },
         alt: 'Through the holes, the Diwatas\' eyes—the stars—peek at the world below.',
         at: { x: 24.6, y: 30.4 },
         voiceAt: 2.2,
         fallbackAt: 2.2,
       },
       {
-        src: '/assets/comic/S1p2/S1_P2 (The sikluban has two parts).webp',
+        src: '/assets/comic/S1p2/English/ENG_The Sikluban.webp',
+        srcByLang: { pam: '/assets/comic/S1p2/Pampanga/PAM_The Sikluban.webp' },
         alt: 'The Sikluban has two parts. At the top is *Ibpang Banua, the Father Sky, where a Sky Bird holds dominion—his wings painting the heavens a beautiful blue.',
         at: { x: 82.35, y: 69.5 },
         voiceAt: 0,
@@ -159,36 +163,44 @@ export const pages = [
     ],
     advanceAfter: 3,
     videoSeconds: 20,          // the narration adds up to 8.5 + 7.2 + 4.3 = 20s; only that much video is used
-    // Box i is shown as narration clip i starts. The first three share the top-left corner, so each replaces the last.
+    // Box i is shown as narration clip i starts. Every box stays on screen once it has appeared.
     captions: [
       {
-        src: '/assets/comic/s1p3/S1_P3 (At the bottom lies Indung).webp',
+        src: '/assets/comic/s1p3/English/ENG_At the bottom lies.webp',
+        srcByLang: { pam: '/assets/comic/s1p3/Pampanga/PAM_At the bottom lies.webp' },
         alt: 'At the bottom lies Indung Laut, the mother ocean, where a giant crocodile rests.',
-        at: { x: 17.1, y: 29.3 },
+        at: { x: 18.05, y: 26.05 },
         voiceAt: 0.3,
         fallbackAt: 0.3,
       },
       {
-        src: '/assets/comic/s1p3/S1_P3 (The giant Croco).webp',
-        alt: 'The giant crocodile is named Indung Tibuan. The earth rests upon her back...',
-        at: { x: 24, y: 25 },
+        src: '/assets/comic/s1p3/English/ENG_The giant crocodile.webp',   // no Kapampangan art yet: shows the English box
+        alt: 'The giant crocodile is named Indung Tibuan.',
+        at: { x: 21.15, y: 34.95 },
         voiceAt: 0.5,
         fallbackAt: 8.5,
-        replaces: [0],
       },
       {
-        src: '/assets/comic/s1p3/S1_P3 (And the world shakes).webp',
+        src: '/assets/comic/s1p3/English/ENG_and the world shakes.webp',
+        srcByLang: { pam: '/assets/comic/s1p3/Pampanga/PAM_and the world shakes.webp' },
         alt: '...and the world shakes whenever she moves!',
-        at: { x: 24, y: 25 },       // same spot as the box before it: clear of the croco's back
+        at: { x: 85.2, y: 74.45 },
         voiceAt: 0.6,
         fallbackAt: 16.2,
-        replaces: [1],
       },
       {
-        src: '/assets/comic/s1p3/S1_P3 FOOTNOTE.webp',
+        src: '/assets/comic/s1p3/English/ENG_FOOTNOTE.webp',   // no Kapampangan art yet: shows the English box
         alt: '*Ibpang Banua is the sky and Indung Laut is the water. They are both formless in nature.',
-        at: { x: 81, y: 81 },
+        at: { x: 21.65, y: 92.7 },
         fallbackAt: 6,   // no voice of its own: it follows the first box
+      },
+      {
+        // second half of the croco narration clip (starts at 8.5s): no clip of its own, so it is timed
+        src: '/assets/comic/s1p3/English/ENG_The earth rests upon her back.webp',
+        srcByLang: { pam: '/assets/comic/s1p3/Pampanga/PAM_The earth rests upon her back.webp' },
+        alt: 'The earth rests upon her back...',
+        at: { x: 76.85, y: 66.05 },
+        fallbackAt: 12.2,
       },
     ],
   },
@@ -207,32 +219,39 @@ export const pages = [
     ],
     advanceAfter: 3,
     videoSeconds: 27.5,        // narration ends at ~25.9s
+    // Box centres follow the artwork's own layout. Boxes stay on screen once shown; only "Landing right on" clears the first two.
     captions: [
       {
-        src: '/assets/comic/s1p4/S1_P4-2.2 (Long ago).webp',
-        alt: 'Long ago...',
-        at: { x: 18.3, y: 12 },     // top of the needle panel
-        scale: 0.8,
+        src: '/assets/comic/s1p4/English/ENG_LONG AGO AS APUNG.webp',
+        srcByLang: { pam: '/assets/comic/s1p4/Pampanga/PAM_Long ago as Apung.webp' },
+        alt: 'Long ago, as Apung Mangacha was still weaving, her *sikwan slipped from her grip... dropping deep into the dome.',
+        at: { x: 18.1, y: 12.2 },     // top left
         voiceAt: 0.3,
         fallbackAt: 0.3,
       },
       {
-        src: '/assets/comic/s1p4/S1_P4-2.2 (It fell down).webp',
-        alt: '...it fell down.',
-        at: { x: 17.9, y: 88.5 },     // bottom of the needle panel
-        scale: 0.7,
+        src: '/assets/comic/s1p4/English/ENG_IT FELL DOWN.webp',
+        srcByLang: { pam: '/assets/comic/s1p4/Pampanga/PAM_IT FELL DOWN.webp' },
+        alt: 'It fell down...',
+        at: { x: 18.45, y: 86.8 },    // bottom left
         voiceAt: 0.1,        // shows as its voice starts, 0:12
         fallbackAt: 12,
-        replaces: [0],        // the first box goes away when this one appears
       },
       {
-        src: '/assets/comic/s1p4/S1_P4-2.3 (Landing right on).webp',
-        alt: 'Landing right on...',
-        at: { x: 68.7, y: 19.6 },     // open sky at upper right
-        scale: 1,
+        src: '/assets/comic/s1p4/English/ENG_LANDING RIGHT ON INDUNG.webp',
+        srcByLang: { pam: '/assets/comic/s1p4/Pampanga/PAM_LANDING RIGHT ON INDUNG.webp' },
+        alt: "Landing right on Indung Tibuan's back, piercing her into place. The end of sikwan pokes out from her, forming Mt. Alaya.",
+        at: { x: 67.25, y: 19.45 },   // open sky, upper right
         voiceAt: 0.1,         // ~0:14.5
         fallbackAt: 14.5,
-        replaces: [1],
+        replaces: [0, 1],     // "Long ago" and "It fell down" go away only now
+      },
+      {
+        src: '/assets/comic/s1p4/English/FOOTNOTE.webp',
+        srcByLang: { pam: '/assets/comic/s1p4/Pampanga/PAM_FOOTNOTE.webp' },
+        alt: '"Sikwan" is a Kapampangan term for a weaving or netting needle. In this story, the sikwan is a bamboo needle that Apung Mangacha used to weave the dome.',
+        at: { x: 77.55, y: 93.7 },    // bottom right
+        fallbackAt: 3,   // no voice of its own: it follows the first box
       },
     ],
   },
