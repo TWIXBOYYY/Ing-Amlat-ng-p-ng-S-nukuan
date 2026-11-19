@@ -37,9 +37,9 @@ import { createSettingsOverlay } from './components/settings/settings.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-// The menu screens share one nature ambience (a 30s loop). Starting the story replaces it with the story's own
+// The menu screens share one forest-birds ambience (a 30s loop). Starting the story replaces it with the story's own
 // ambience, or fades it out (see triggerPageAudio in the reader).
-const MENU_AMBIENCE = '/assets/audio/ambience/menu-nature-30s.mp3';
+const MENU_AMBIENCE = '/assets/audio/ambience/menu-forest-birds-30s.mp3';
 const menuAmbience = () => AudioManager.playAmbience(MENU_AMBIENCE, { gain: 0.34 });
 
 function bootstrap() {
