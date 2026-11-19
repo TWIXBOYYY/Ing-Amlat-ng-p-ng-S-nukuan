@@ -288,6 +288,7 @@ export function unmountReader(el) {
   resetCaptions();
   clearTimeout(advanceTimer);
   setHold(el, false);
+  stopPageSfx();
   AudioManager.stopNarration();
   AudioManager.stopAmbience({ fade: true });
   clearTimeout(el._hudIdleTimer);
@@ -300,8 +301,20 @@ export function unmountReader(el) {
 // Internal helpers
 // ─────────────────────────────────────
 
+/** A page's sound effects belong to that page: they fade out when it is left, instead of playing on over the next one. */
+const pageSfx = new Set();
+function playPageSfx(src, volume) {
+  pageSfx.add(src);
+  AudioManager.playSfx(src, volume);
+}
+function stopPageSfx() {
+  pageSfx.forEach(src => AudioManager.stopSfx(src, null, 350));
+  pageSfx.clear();
+}
+
 function goTo(idx, direction, rootEl) {
   if (idx < 0 || idx >= pages.length || isTransitioning) return;
+  stopPageSfx();
   const refs = getRefs(rootEl);
   transitionTo(idx, direction, refs);
 }
@@ -538,6 +551,7 @@ function triggerPageAudio(idx) {
   const page = pages[idx];
   if (!page) return;
   const captionImgs = startCaptions(idx);
+  stopPageSfx();
   clearTimeout(advanceTimer);
   setHold(readerEl, false);   // each new page starts with autoplay on
 
@@ -555,7 +569,7 @@ function triggerPageAudio(idx) {
       // sounds tied to this narration clip start with it (plus their own delay, if any)
       (page.sfx || []).filter(s => s.clip === i).forEach(s => {
         const src = encodeURI(s.src);
-        (pageEls[idx]._capTimers ||= []).push(setTimeout(() => AudioManager.playSfx(src, s.volume ?? 1), (s.at || 0) * 1000));
+        (pageEls[idx]._capTimers ||= []).push(setTimeout(() => playPageSfx(src, s.volume ?? 1), (s.at || 0) * 1000));
       });
       const cap = page.captions?.[i];
       if (!cap) return;
@@ -589,8 +603,8 @@ function triggerPageAudio(idx) {
   // 'enter' sounds play when the page opens; with `at` they wait that many seconds first (cleared if the page is left)
   (page.sfx || []).filter(s => s.on === 'enter' && s.clip == null).forEach(s => {
     const src = encodeURI(s.src);
-    if (!s.at) { AudioManager.playSfx(src, s.volume ?? 1); return; }
-    (pageEls[idx]._capTimers ||= []).push(setTimeout(() => AudioManager.playSfx(src, s.volume ?? 1), s.at * 1000));
+    if (!s.at) { playPageSfx(src, s.volume ?? 1); return; }
+    (pageEls[idx]._capTimers ||= []).push(setTimeout(() => playPageSfx(src, s.volume ?? 1), s.at * 1000));
   });
 }
 

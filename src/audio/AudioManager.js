@@ -219,14 +219,20 @@ export const AudioManager = {
       h = new Howl({ src: [src], sprite: part ? { __default: [part.start * 1000, part.length * 1000] } : undefined });
       _sfxCache.set(key, h);
     }
+    h._plays = (h._plays || 0) + 1;
     h.volume(eff('sfx') * volume);
     h.play();
   },
 
-  /** Cut a sound short (same arguments as playSfx). */
-  stopSfx(src, part = null) {
+  /** Cut a sound short (same file and slice as playSfx); with `fadeMs` it fades out first. */
+  stopSfx(src, part = null, fadeMs = 0) {
     const key = part ? `${src}#${part.start}-${part.length}` : src;
-    _sfxCache.get(key)?.stop();
+    const h = _sfxCache.get(key);
+    if (!h) return;
+    if (!fadeMs) { h.stop(); return; }
+    const token = h._plays;   // if the sound is started again during the fade, leave the new one alone
+    h.fade(h.volume(), 0, fadeMs);
+    setTimeout(() => { if (h._plays === token) h.stop(); }, fadeMs + 30);
   },
 
   pauseAll() { _music?.pause(); _ambience?.pause(); _narration?.pause(); },
