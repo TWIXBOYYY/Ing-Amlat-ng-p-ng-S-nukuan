@@ -19,6 +19,7 @@ import { initRouter, registerScreen, navigate } from './utils/router.js';
 
 /* ── Audio ── */
 import { AudioManager }           from './audio/AudioManager.js';
+import { initUiSounds }           from './audio/ui-sounds.js';
 
 /* ── Screens ── */
 import { createSplashScreen,  mountSplash }   from './screens/loading/splash.js';
@@ -36,12 +37,18 @@ import { createSettingsOverlay } from './components/settings/settings.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+// The menu screens share one nature ambience (a 30s loop). Starting the story replaces it with the story's own
+// ambience, or fades it out (see triggerPageAudio in the reader).
+const MENU_AMBIENCE = '/assets/audio/ambience/menu-nature-30s.mp3';
+const menuAmbience = () => AudioManager.playAmbience(MENU_AMBIENCE, { gain: 0.34 });
+
 function bootstrap() {
   // 1. Scale the 1920×1080 stage to fit the viewport
   initScaler();
 
   // 2. Initialise audio (loads persisted settings from localStorage)
   AudioManager.init();
+  initUiSounds();   // hover and click sounds on every button
 
   const app = document.getElementById('app');
 
@@ -65,12 +72,12 @@ function bootstrap() {
 
   // 5. Register routes
   registerScreen('#splash',  { mount: (el) => mountSplash(el) });
-  registerScreen('#loading', { mount: (el) => mountLoading(el), unmount: (el) => { el._stopParallax?.(); el._stopParallax = null; } });
-  registerScreen('#home',    { mount: (el) => mountHome(el),   unmount: (el) => unmountHome(el) });
-  registerScreen('#about',   { mount: (el) => mountAbout(el) });
-  registerScreen('#credits', { mount: (el) => mountCredits(el) });
+  registerScreen('#loading', { mount: (el) => mountLoading(el, { waitForClick: true }), unmount: (el) => { el._stopParallax?.(); el._stopParallax = null; } });
+  registerScreen('#home',    { mount: (el) => { menuAmbience(); mountHome(el); }, unmount: (el) => unmountHome(el) });
+  registerScreen('#about',   { mount: (el) => { menuAmbience(); mountAbout(el); } });
+  registerScreen('#credits', { mount: (el) => { menuAmbience(); mountCredits(el); } });
   registerScreen('#reader',  { mount: (el) => mountReader(el), unmount: (el) => unmountReader(el) });
-  registerScreen('#characters', { mount: (el) => mountCharacters(el) });
+  registerScreen('#characters', { mount: (el) => { menuAmbience(); mountCharacters(el); } });
   registerScreen('#minigame',   { mount: (el) => mountMinigame(el)   });
   registerScreen('#minigame-loading', { mount: (el) => mountMinigameLoading(el), unmount: (el) => stopMinigameLoading(el) });
 

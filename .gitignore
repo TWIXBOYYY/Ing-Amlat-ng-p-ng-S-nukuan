@@ -19,3 +19,6 @@ Thumbs.db
 
 # Full-length source recording (185 MB, over GitHub's 100 MB limit); the site uses audio/ambience/space-ambient.mp3
 public/assets/audio/ambience/Space Ambient Music*
+
+# full-length nature recording (15 min, 14 MB); the site plays the 30s cut, menu-nature-30s.mp3
+public/assets/audio/ambience/Nature Sounds Of Scotland*

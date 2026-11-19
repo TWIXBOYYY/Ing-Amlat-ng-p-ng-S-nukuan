@@ -20,10 +20,9 @@ document.addEventListener('language:change', () => {
   });
 });
 
-const AUTOPLAY_INTERVAL_MS = 6000;
 const HUD_IDLE_MS = 2500;
 const VIDEO_START_FALLBACK_MS = 900;
-const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/Turn a page.mp3');
+const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/ui/Turn a page.mp3');
 const VIDEO_END_SNAP_S = 1.5;
 const LANDSCAPE = '(orientation: landscape) and (min-width: 521px)';
 
@@ -164,7 +163,7 @@ let advanceTimer = null;
 /** @type {number} page whose video may play (set when a page becomes current) */
 let videoTarget = -1;
 /** @type {number|null} */
-let autoplayTimer = null;
+let holdPage = false;   // autoplay switched off for the current page; cleared whenever the page changes
 
 /** @param {HTMLElement} el */
 export function mountReader(el) {
@@ -204,6 +203,7 @@ export function mountReader(el) {
         .forEach(h => h && h.classList.add('show'));
     }
     el._showHud = showHud;
+    document.addEventListener('settings:closed', () => wakeHud(el));   // buttons come back, then idle out again
     ['pointermove', 'pointerdown', 'keydown'].forEach(t => el.addEventListener(t, () => wakeHud(el), { passive: true }));
     el._stopHud = () => {};
 
@@ -211,7 +211,6 @@ export function mountReader(el) {
     prevBtn.addEventListener('click', () => goTo(currentIndex - 1, 'prev', el));
     nextBtn.addEventListener('click', () => {
       if (currentIndex >= pages.length - 1) {
-        stopAutoplay(el);
         navigate('#minigame-loading');
       } else {
         goTo(currentIndex + 1, 'next', el);
@@ -261,25 +260,18 @@ export function mountReader(el) {
 
     // HUD action buttons
     el.querySelector('#reader-home-btn').addEventListener('click', () => {
-      stopAutoplay(el);
       AudioManager.pauseAll();
       navigate('#home');
     });
 
     el.querySelector('#reader-restart-btn').addEventListener('click', () => {
-      stopAutoplay(el);
       goTo(0, currentIndex > 0 ? 'prev' : 'next', el);
     });
 
-    el.querySelector('#reader-autoplay-btn').addEventListener('click', () => {
-      const btn = el.querySelector('#reader-autoplay-btn');
-      if (autoplayTimer) {
-        stopAutoplay(el);
-      } else {
-        startAutoplay(el);
-      }
-      btn.setAttribute('aria-pressed', String(!!autoplayTimer));
-    });
+    // Autoplay is on by default: a page turns itself once its narration is done. Pressing the button holds
+    // the current page for as long as the reader likes; swiping or pressing next/previous moves on and
+    // autoplay is back on for the next page.
+    el.querySelector('#reader-autoplay-btn').addEventListener('click', () => setHold(el, !holdPage));
 
     el.querySelector('#reader-settings-btn').addEventListener('click', toggleSettings);
   }
@@ -292,10 +284,10 @@ export function mountReader(el) {
 
 /** @param {HTMLElement} el */
 export function unmountReader(el) {
-  stopAutoplay(el);
   pageEls.forEach(pe => pe.querySelector('video')?.pause());
   resetCaptions();
   clearTimeout(advanceTimer);
+  setHold(el, false);
   AudioManager.stopNarration();
   AudioManager.stopAmbience({ fade: true });
   clearTimeout(el._hudIdleTimer);
@@ -331,12 +323,15 @@ function markVideoPage(el, idx) {
   wakeHud(el);
 }
 
+const settingsOpen = () => !!document.querySelector('.settings-overlay.open');
+
 /** Show the buttons; on a landscape video page, hide them again after a few idle seconds. */
 function wakeHud(el) {
   el.classList.remove('hud-idle');
   clearTimeout(el._hudIdleTimer);
   if (el.classList.contains('is-video-page') && window.matchMedia(LANDSCAPE).matches) {
-    el._hudIdleTimer = setTimeout(() => el.classList.add('hud-idle'), HUD_IDLE_MS);
+    // the buttons stay while the settings panel is open
+    el._hudIdleTimer = setTimeout(() => { if (!settingsOpen()) el.classList.add('hud-idle'); }, HUD_IDLE_MS);
   }
 }
 
@@ -544,6 +539,7 @@ function triggerPageAudio(idx) {
   if (!page) return;
   const captionImgs = startCaptions(idx);
   clearTimeout(advanceTimer);
+  setHold(readerEl, false);   // each new page starts with autoplay on
 
   if (page.music)    AudioManager.playMusic(page.music);
   if (page.ambience) AudioManager.playAmbience(page.ambience, { gain: page.ambienceVolume ?? 1 });
@@ -552,9 +548,15 @@ function triggerPageAudio(idx) {
   if (page.video && page.narration) {
     (pageEls[idx]._capTimers ||= []).push(setTimeout(() => playPageVideo(idx), VIDEO_START_FALLBACK_MS));
   }
-  AudioManager.playNarration(page.narration || null, {
+  // narrationDelay: the video plays on its own for that many seconds before the voice begins
+  const startNarration = () => AudioManager.playNarration(page.narration || null, {
     onTrack: i => {
       if (i === 0) playPageVideo(idx);
+      // sounds tied to this narration clip start with it (plus their own delay, if any)
+      (page.sfx || []).filter(s => s.clip === i).forEach(s => {
+        const src = encodeURI(s.src);
+        (pageEls[idx]._capTimers ||= []).push(setTimeout(() => AudioManager.playSfx(src, s.volume ?? 1), (s.at || 0) * 1000));
+      });
       const cap = page.captions?.[i];
       if (!cap) return;
       // wait for the voice itself (clips can open with a moment of silence)
@@ -563,7 +565,7 @@ function triggerPageAudio(idx) {
     },
     // After the last clip: wait, then turn the page (unless the reader already moved on)
     onEnd: () => {
-      if (page.advanceAfter == null) return;
+      if (page.advanceAfter == null || holdPage) return;
       let wait = page.advanceAfter;
       // If the video is about to finish anyway, turn the page as it does, so the last frame never sits still
       const v = pageEls[idx]?.querySelector('video');
@@ -573,28 +575,32 @@ function triggerPageAudio(idx) {
         else if (Math.abs(left - wait) <= VIDEO_END_SNAP_S) wait = Math.max(left - 0.3, 0);   // start sliding just before the end
       }
       advanceTimer = setTimeout(() => {
-        if (currentIndex === idx && readerEl?.classList.contains('active')) goTo(idx + 1, 'next', readerEl);
+        if (!holdPage && currentIndex === idx && readerEl?.classList.contains('active')) goTo(idx + 1, 'next', readerEl);
       }, wait * 1000);
     },
   });
+  if (page.narrationDelay && page.narration) {
+    playPageVideo(idx);
+    (pageEls[idx]._capTimers ||= []).push(setTimeout(startNarration, page.narrationDelay * 1000));
+  } else {
+    startNarration();
+  }
 
-  (page.sfx || []).filter(s => s.on === 'enter').forEach(s => AudioManager.playSfx(s.src));
+  // 'enter' sounds play when the page opens; with `at` they wait that many seconds first (cleared if the page is left)
+  (page.sfx || []).filter(s => s.on === 'enter' && s.clip == null).forEach(s => {
+    const src = encodeURI(s.src);
+    if (!s.at) { AudioManager.playSfx(src, s.volume ?? 1); return; }
+    (pageEls[idx]._capTimers ||= []).push(setTimeout(() => AudioManager.playSfx(src, s.volume ?? 1), s.at * 1000));
+  });
 }
 
-function startAutoplay(el) {
-  autoplayTimer = setInterval(() => {
-    if (currentIndex >= pages.length - 1) {
-      stopAutoplay(el);
-      return;
-    }
-    goTo(currentIndex + 1, 'next', el);
-  }, AUTOPLAY_INTERVAL_MS);
-  el.querySelector('#reader-autoplay-btn')?.classList.add('autoplay-active');
-}
-
-function stopAutoplay(el) {
-  if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-  el?.querySelector('#reader-autoplay-btn')?.classList.remove('autoplay-active');
+/** Hold the current page (autoplay off), or let it turn itself again. */
+function setHold(el, on) {
+  holdPage = on;
+  if (on) clearTimeout(advanceTimer);   // a turn already waiting is cancelled
+  const btn = el?.querySelector('#reader-autoplay-btn');
+  btn?.classList.toggle('autoplay-active', !on);
+  btn?.setAttribute('aria-pressed', String(on));
 }
 
 function preloadAhead(idx) {

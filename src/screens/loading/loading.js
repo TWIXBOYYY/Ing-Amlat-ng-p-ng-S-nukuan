@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { addParallaxLayers, startParallax } from '../../utils/parallax-bg.js';
+import { playClickSound } from '../../audio/ui-sounds.js';
 
 
 const DAY_BG   = '/assets/ui/MT.ALAYA_DAY.webp';
@@ -40,7 +41,9 @@ export function createMinigameLoadingScreen() {
 }
 
 /** @param {HTMLElement} el */
-export function mountLoading(el, { duration = 1.6, onDone = () => navigate('#home'), fadeOut = true } = {}) {
+/** waitForClick: when loading is done, ask for a click (or key press) before moving on. That first gesture is
+ *  what lets the browser play sound, so hover sounds and music work from the start of the home screen. */
+export function mountLoading(el, { duration = 1.6, onDone = () => navigate('#home'), fadeOut = true, waitForClick = false } = {}) {
   el._stopParallax?.();
   el._stopParallax = startParallax(el);
 
@@ -75,7 +78,7 @@ export function mountLoading(el, { duration = 1.6, onDone = () => navigate('#hom
       duration,
       ease: 'power1.inOut',
       onUpdate() { setProgress(this.targets()[0].v); },
-      onComplete() { finish(el, onDone, fadeOut); },
+      onComplete() { finish(el, onDone, fadeOut, waitForClick); },
     });
   } else {
     let done = 0;
@@ -84,16 +87,40 @@ export function mountLoading(el, { duration = 1.6, onDone = () => navigate('#hom
       img.onload = img.onerror = () => {
         done++;
         setProgress((done / criticalAssets.length) * 100);
-        if (done === criticalAssets.length) finish(el, onDone, fadeOut);
+        if (done === criticalAssets.length) finish(el, onDone, fadeOut, waitForClick);
       };
       img.src = src;
     });
   }
 }
 
-function finish(el, onDone, fadeOut) {
-  el._finishTimer = setTimeout(() => {
+function finish(el, onDone, fadeOut, waitForClick = false) {
+  // the bar has done its job: let it fade away
+  el.querySelector('.loading-progress-bar')?.classList.remove('visible');
+
+  const leave = () => {
     if (!fadeOut) { onDone(); return; }
     gsap.to(el, { opacity: 0, duration: 0.75, ease: 'power2.inOut', onComplete: onDone });
+  };
+
+  el._finishTimer = setTimeout(() => {
+    if (!waitForClick) { leave(); return; }
+    const label = el.querySelector('.loading-label');
+    const orb   = el.querySelector('.loading-orb-wrap');
+    label.textContent = 'CLICK TO CONTINUE';
+    label.classList.add('is-ready');
+    const go = () => {
+      el.removeEventListener('pointerdown', go);
+      document.removeEventListener('keydown', go);
+      playClickSound();
+      // The text stays gold while it fades with the sun. The mountain stays too, and a sky tone sits behind the
+      // hand-off to the home screen, so it never dips to black.
+      const app = document.getElementById('app');
+      if (app) { app.style.background = '#a9e2ec'; setTimeout(() => { app.style.background = ''; }, 2000); }
+      gsap.to([label, orb], { opacity: 0, duration: 0.4, ease: 'power1.in', onComplete: onDone });
+    };
+    el.addEventListener('pointerdown', go);
+    document.addEventListener('keydown', go);
+    el._cancelWait = go;
   }, 350);
 }

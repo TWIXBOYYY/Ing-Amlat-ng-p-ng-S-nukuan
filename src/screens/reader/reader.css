@@ -230,9 +230,9 @@ span.reader-hud-btn-img img {
   pointer-events: none;
 }
 
-/* Restart — uses Restart.png as the full button frame */
+/* Restart — same plain paper as the back and autoplay buttons, in the wide shape */
 .reader-hud-restart-btn {
-  background: url('/assets/ui/Restart.png') center/100% 100% no-repeat;
+  background: url('/assets/ui/MEDIUM LENGTH.png') center/100% 100% no-repeat;
   width: clamp(120px, 17vmin, 200px);
 }
 
@@ -247,7 +247,7 @@ span.reader-hud-btn-img img {
   user-select: none;
 }
 
-/* Autoplay active — gold glow so the state is obvious */
+/* Autoplay on (the default) — gold glow; it goes out while the page is being held */
 .reader-hud-img-btn.autoplay-active {
   filter: drop-shadow(0 0 10px rgba(201,162,39,0.9)) brightness(1.2);
 }

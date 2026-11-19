@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { AudioManager } from '../../audio/AudioManager.js';
 
-const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/Turn a page.mp3');
+const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/ui/Turn a page.mp3');
 
 const CHARACTERS = [
   {

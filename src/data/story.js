@@ -20,13 +20,14 @@
  *  narration   {Clip|Clip[]}  Audio file (or several, played one after another) — plays on page enter.
  *                             A clip is a path, or { src, startSeconds, maxSeconds } to play just that part
  *                             of the file (skip leading silence / cut a tail so clips join without a gap)
+ *  narrationDelay {number}    Seconds the video plays on its own before the narration starts (default 0)
  *  advanceAfter {number}      Seconds to wait after the narration ends, then turn to the next page
  *  captions    {Caption[]}    Text panels (transparent PNGs the size of the video frame) animated in over
  *                             a video page; caption i appears when narration clip i starts
  *  music       {string}       Background music — continues unchanged if same as prev page
  *  ambience    {string|null}  Ambience loop   — continues unchanged if same as prev page; null fades it out
  *  ambienceVolume {number}    0..1, how loud the ambience sits under the narration (default 1)
- *  sfx         {SfxTrigger[]} One-shot sounds { src, on: 'enter'|'reveal' }
+ *  sfx         {SfxTrigger[]} One-shot sounds { src, on: 'enter'|'reveal', at?: delay in seconds, clip?: narration clip index to start with, volume?: 0..1 }
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -57,6 +58,8 @@
  * @typedef {Object} SfxTrigger
  * @property {string} src
  * @property {'enter'|'reveal'} on
+ * @property {number} [at]     seconds to wait (after the page opens, or after its narration clip starts); default 0
+ * @property {number} [clip]   narration clip index: start with that clip instead of when the page opens
  */
 
 /**
@@ -92,6 +95,8 @@ export const pages = [
       '/assets/narration/S1/S1-P1-NARRATOR-001.wav',
       '/assets/narration/S1/S1-P1-NARRATOR-002.1.wav',
     ],
+    // The voice says "a great giant spider named Apung Mangacha" from ~2.7s into clip 1; the alien sound (30s, quiet) starts there
+    sfx: [{ src: '/assets/audio/sfx/s1p1/Alien sound.mp3', on: 'enter', clip: 0, at: 2.7, volume: 0.8 }],
     advanceAfter: 3,
     captions: [
       {
@@ -125,6 +130,8 @@ export const pages = [
       { src: '/assets/narration/s1p2/S1-P2-NARRATOR-001.wav', maxSeconds: 10 },
       { src: '/assets/narration/s1p2/S1-P2-NARRATOR-002.wav', startSeconds: 0.8, maxSeconds: 16 },
     ],
+    // The wing flap is 2.0-3.0s into its file. Started 7.2s into clip 1 it sounds at 9.2-10.2s: the end of clip 1 (10s), just before clip 2
+    sfx: [{ src: '/assets/audio/sfx/s1p2/WINGS.mp3', on: 'enter', clip: 0, at: 7.2 }],
     advanceAfter: 3,
     // Narration clip 1 reads the "Through the holes" box, clip 2 reads the "Sikluban" box
     captions: [
@@ -161,6 +168,8 @@ export const pages = [
       { src: '/assets/narration/s1p3/S1-P3-PANEL1-NARRATOR-001.wav', startSeconds: 0.3, maxSeconds: 7.5 },   // 7.2s
       { src: '/assets/narration/s1p3/S1-P3-PANEL1-NARRATOR-001.wav', startSeconds: 7.5, maxSeconds: 11.8 },  // 4.3s
     ],
+    // The sliding is audible 2.5-4.7s into its file. Started 3.8s into clip 1 (8.5s long) it sounds at ~6.3-8.5s: right before clip 1 ends
+    sfx: [{ src: '/assets/audio/sfx/s1p3/Crocodile sliding.mp3', on: 'enter', clip: 0, at: 3.8 }],
     advanceAfter: 3,
     videoSeconds: 20,          // the narration adds up to 8.5 + 7.2 + 4.3 = 20s; only that much video is used
     // Box i is shown as narration clip i starts. Every box stays on screen once it has appeared.
@@ -217,6 +226,15 @@ export const pages = [
       { src: '/assets/narration/s1p4/S1-P4-PANEL1-NARRATOR-003.wav', startSeconds: 0.9, maxSeconds: 2.6, pauseSeconds: 0.9 },   // voice at 0:12
       { src: '/assets/narration/s1p4/S1-P4-PANEL2-NARRATOR-001.wav', startSeconds: 0.9, maxSeconds: 12.39, pauseSeconds: 0.8 },  // 1s of silence after "It fell down", voice at ~0:14.5
     ],
+    // clip 2 (index 1) is the "It fell down" box: the flying sound starts with it.
+    // clip 3 (index 2) is "Landing right on...": the impact lands with it (see below) and the roar starts with it.
+    sfx: [
+      { src: '/assets/audio/sfx/s1p4/SUPERMAN FLYING SOUND EFFECT - FREE.mp3', on: 'enter', clip: 1 },
+      // the impact is 2.0s into its file; clip 2 lasts 1.7s and the pause before clip 3 is 0.8s (2.5s in total), so starting
+      // it 0.5s into clip 2 makes the hit land as clip 3 starts
+      { src: '/assets/audio/sfx/s1p4/WATER IMPACT.mp3', on: 'enter', clip: 1, at: 0.5 },
+      { src: '/assets/audio/sfx/s1p4/MONSTER ROAR.mp3', on: 'enter', clip: 2 },
+    ],
     advanceAfter: 3,
     videoSeconds: 27.5,        // narration ends at ~25.9s
     // Box centres follow the artwork's own layout. Boxes stay on screen once shown; only "Landing right on" clears the first two.
@@ -262,6 +280,14 @@ export const pages = [
     alt: 'Season 2, page 1 — motion graphic.',
     music:    '/assets/audio/music/theme-mystery.mp3',
     ambience: null,
+    // Four clips back to back (13.8 + 10.5 + 6.6 + 16.1 = 47s); the video starts with the first voice
+    narration: [
+      { src: '/assets/narration/s2p1/S2-P1-PANEL1-NARRATOR-001.wav' },     // played whole so the last word is not cut
+      { src: '/assets/narration/s2p1/S2-P1-PANEL1-NARRATOR-002.wav', startSeconds: 0.5, maxSeconds: 11 },     // 0:00.5 to 0:11 (10.5s)
+      { src: '/assets/narration/s2p1/S2-P1-PANEL2-NARRATOR-001.wav', startSeconds: 1.2, maxSeconds: 7.8 },     // skips the 1.2s of silence before the voice (starts ~1.5s), so no gap
+      { src: '/assets/narration/s2p1/S2-P1-PANEL3-NARRATOR-001.wav' },
+    ],
+    advanceAfter: 3,
   },
   {
     id: 'page-06',
@@ -270,6 +296,15 @@ export const pages = [
     alt: 'Season 2, page 2 — motion graphic.',
     music:    '/assets/audio/music/theme-mystery.mp3',
     ambience: null,
+    // Clip 1 (13.6s) is cut at 0:10; clip 2 (3.6s) follows straight after. The video runs 24.2s, so the page turns as it ends.
+    narration: [
+      { src: '/assets/narration/s2p2/S2-P2-NARRATOR-001.1.wav', startSeconds: 0, maxSeconds: 10 },
+      { src: '/assets/narration/s2p2/S2-P2-PANEL3-NARRATOR-001.2.wav' },
+    ],
+    advanceAfter: 3,
+    videoSeconds: 24.2,
+    // The sound starts 8s into narration clip 1 (clip index 0)
+    sfx: [{ src: '/assets/audio/sfx/s2p2/Alligator Growl And Snap Sound Effect.mp3', on: 'enter', clip: 0, at: 8 }],
   },
   {
     id: 'page-07',
@@ -278,6 +313,14 @@ export const pages = [
     alt: 'Season 2, page 3 — motion graphic.',
     music:    '/assets/audio/music/theme-mystery.mp3',
     ambience: null,
+    // The video plays alone for 6s, then the two clips follow back to back (11.8 + 9.4s); the page turns as the 30s video ends
+    narrationDelay: 6,
+    narration: [
+      { src: '/assets/narration/s2p3/S2-P3-NARRATOR-001.wav' },
+      { src: '/assets/narration/s2p3/S2-P3-NARRATOR-002.wav' },
+    ],
+    advanceAfter: 3,
+    videoSeconds: 30,
   },
   {
     id: 'page-08',

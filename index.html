@@ -6,6 +6,7 @@
   <title>Ing Amlat ng Ápûng Sinukuan</title>
   <meta name="description" content="An interactive digital comic retelling Mt. Alaya Kapampangan myths for today's youth. By Áyup Productions." />
   <link rel="preload" href="/assets/ui/Minigame%20Loading%20Screen%20(no%20lockup).png" as="image" fetchpriority="high">
+  <link rel="preload" href="/assets/ui/Rotate.png" as="image">
   <link rel="preload" href="/assets/fonts/Tribal%20Broots.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="/assets/fonts/McLaren-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +17,11 @@
   <!-- Stage fills the viewport via CSS -->
   <div id="stage">
     <div id="app"></div>
+  </div>
+
+  <!-- Shown over everything while the screen is upright (portrait): the site is landscape only -->
+  <div id="rotate-overlay" role="alert" aria-label="Please rotate your device to landscape">
+    <img src="/assets/ui/Rotate.png" alt="Please rotate your device to landscape" draggable="false">
   </div>
 
   <script type="module" src="/src/main.js"></script>

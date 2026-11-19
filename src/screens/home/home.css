@@ -206,3 +206,25 @@ span.home-settings-btn-img img {
     right: max(clamp(12px, 2.5vw, 28px), env(safe-area-inset-right));
   }
 }
+
+/* ── Title sparkles (see startTitleSparkles in home.js) ── */
+.home-title-art {
+  position: relative;
+  line-height: 0;
+}
+
+.home-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.home-sparkle {
+  position: absolute;
+  translate: -50% -50%;           /* the star is centred on its spot */
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 1)) drop-shadow(0 0 7px rgba(255, 214, 90, 1)) drop-shadow(0 0 14px rgba(232, 180, 40, 0.9));
+  will-change: transform, opacity;
+}

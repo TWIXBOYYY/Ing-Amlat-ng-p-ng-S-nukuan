@@ -1,4 +1,4 @@
-import { Howl, Howler } from 'howler';
+import { Howl } from 'howler';
 
 const STORAGE_KEY = 'sinukuan_audio_v1';
 
@@ -48,14 +48,8 @@ function eff(ch) {
 export const AudioManager = {
   init() {
     load();
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        Howler.volume(0);
-      } else {
-        Howler.volume(1);
-        this._applyAll();
-      }
-    });
+    // Sound keeps playing when the tab or window is in the background (alt-tab, another tab);
+    // it used to be muted while hidden. Only the volume sliders and mute buttons change it.
   },
 
   /** Must be called on the first user interaction to satisfy browser autoplay policy. */
@@ -213,13 +207,26 @@ export const AudioManager = {
     _narrationHowls = [];
   },
 
-  /** Fire-and-forget SFX. */
-  playSfx(src) {
+  /**
+   * Fire-and-forget SFX. `volume` (0..1) scales it under the sound-effects slider.
+   * `part` ({ start, length } in seconds) plays just that slice, to skip silence at the start of a file.
+   */
+  playSfx(src, volume = 1, part = null) {
     if (!unlocked || !src) return;
-    let h = _sfxCache.get(src);   // one Howl per file, so a repeated sound starts instantly
-    if (!h) { h = new Howl({ src: [src] }); _sfxCache.set(src, h); }
-    h.volume(eff('sfx'));
+    const key = part ? `${src}#${part.start}-${part.length}` : src;
+    let h = _sfxCache.get(key);   // one Howl per file (and slice), so a repeated sound starts instantly
+    if (!h) {
+      h = new Howl({ src: [src], sprite: part ? { __default: [part.start * 1000, part.length * 1000] } : undefined });
+      _sfxCache.set(key, h);
+    }
+    h.volume(eff('sfx') * volume);
     h.play();
+  },
+
+  /** Cut a sound short (same arguments as playSfx). */
+  stopSfx(src, part = null) {
+    const key = part ? `${src}#${part.start}-${part.length}` : src;
+    _sfxCache.get(key)?.stop();
   },
 
   pauseAll() { _music?.pause(); _ambience?.pause(); _narration?.pause(); },

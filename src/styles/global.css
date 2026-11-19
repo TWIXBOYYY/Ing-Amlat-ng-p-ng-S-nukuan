@@ -163,3 +163,28 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Landscape only: while the screen is upright, a "rotate your device" card covers everything ── */
+#rotate-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100000;            /* above every screen and the settings panel */
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #000;           /* matches the picture's own black */
+}
+
+#rotate-overlay img {
+  width: min(100vw, 720px);
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (orientation: portrait) {
+  #rotate-overlay { display: flex; }
+}
