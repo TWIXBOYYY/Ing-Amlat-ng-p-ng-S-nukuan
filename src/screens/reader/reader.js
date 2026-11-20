@@ -571,11 +571,16 @@ function triggerPageAudio(idx) {
         const src = encodeURI(s.src);
         (pageEls[idx]._capTimers ||= []).push(setTimeout(() => playPageSfx(src, s.volume ?? 1), (s.at || 0) * 1000));
       });
-      const cap = page.captions?.[i];
-      if (!cap) return;
-      // wait for the voice itself (clips can open with a moment of silence)
-      const t = setTimeout(() => revealCaption(captionImgs?.[i], (cap.replaces || []).map(k => captionImgs?.[k])), (cap.voiceAt ?? 0) * 1000);
-      pageEls[idx]._capTimers?.push(t);
+      // sounds that end when this clip starts (e.g. a wind that runs until the third clip arrives)
+      (page.sfx || []).filter(s => s.stopAtClip === i).forEach(s => AudioManager.stopSfx(encodeURI(s.src), null, s.fadeMs ?? 600));
+      // boxes for this clip: caption k belongs to clip k unless it names another with `clip`, so several
+      // boxes can share one clip, each shown `voiceAt` seconds after the clip starts
+      (page.captions || []).forEach((cap, k) => {
+        if ((cap.clip ?? k) !== i) return;
+        // wait for the voice itself (clips can open with a moment of silence)
+        const t = setTimeout(() => revealCaption(captionImgs?.[k], (cap.replaces || []).map(n => captionImgs?.[n])), (cap.voiceAt ?? 0) * 1000);
+        pageEls[idx]._capTimers?.push(t);
+      });
     },
     // After the last clip: wait, then turn the page (unless the reader already moved on)
     onEnd: () => {

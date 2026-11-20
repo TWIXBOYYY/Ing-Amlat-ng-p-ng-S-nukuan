@@ -27,7 +27,8 @@
  *  music       {string}       Background music — continues unchanged if same as prev page
  *  ambience    {string|null}  Ambience loop   — continues unchanged if same as prev page; null fades it out
  *  ambienceVolume {number}    0..1, how loud the ambience sits under the narration (default 1)
- *  sfx         {SfxTrigger[]} One-shot sounds { src, on: 'enter'|'reveal', at?: delay in seconds, clip?: narration clip index to start with, volume?: 0..1 }
+ *  sfx         {SfxTrigger[]} One-shot sounds { src, on: 'enter'|'reveal', at?: delay in seconds, clip?: narration clip index to start with, volume?: 0..1,
+ *                             stopAtClip?: fade it out when that narration clip starts }
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -60,6 +61,7 @@
  * @property {'enter'|'reveal'} on
  * @property {number} [at]     seconds to wait (after the page opens, or after its narration clip starts); default 0
  * @property {number} [clip]   narration clip index: start with that clip instead of when the page opens
+ * @property {number} [stopAtClip] fade the sound out when that narration clip starts
  */
 
 /**
@@ -288,6 +290,28 @@ export const pages = [
       { src: '/assets/narration/s2p1/S2-P1-PANEL3-NARRATOR-001.wav' },
     ],
     advanceAfter: 3,
+    // Layout: kept inside y 11-89%, because a wide screen crops the top and bottom of the video and would push boxes together.
+    // "Until" and "But found nothing" use the template's two slots on the middle panel (top, bottom); the boxes still to come go in the last panel's slots.
+    // Captions follow the narration: clip 1 (13.8s) says the first two boxes, clip 2 (from 0.5s) the next three and, as its last word, "until".
+    // voiceAt is seconds after the clip starts; fallbackAt is seconds after the page opens (used only if the voice can't start).
+    captions: [
+      { src: '/assets/comic/S2P1/ENG_HIGH IN THE HEAVENS.webp',        alt: 'High in the heavens, Apung Batala, the majestic sky bird, reigns.', at: { x: 21.6, y: 15 },    clip: 0, voiceAt: 0.5, fallbackAt: 1.5 },
+      { src: '/assets/comic/S2P1/ENG_ONE FATEFUL DAY.webp',            alt: 'One fateful day, they wandered the world, hungry.',               at: { x: 30.8, y: 25 },   clip: 0, voiceAt: 6.0, fallbackAt: 7 },
+      { src: '/assets/comic/S2P1/ENG_THEY SEARCHED EVERYWHERE.webp',   alt: 'They searched everywhere—above...',                            at: { x: 23, y: 74 },     clip: 1, voiceAt: 0.5, fallbackAt: 15.3 },
+      { src: '/assets/comic/S2P1/ENG_AND BELOW.webp',                  alt: 'And below...',                                                    at: { x: 32, y: 83 },     clip: 1, voiceAt: 3.8, fallbackAt: 18.6 },
+      { src: '/assets/comic/S2P1/ENG_BUT FOUND NOTHING.webp',          alt: 'But found nothing...',                                            at: { x: 49.5, y: 80 }, clip: 1, voiceAt: 6.1, fallbackAt: 20.9 },
+      { src: '/assets/comic/S2P1/ENG_UNTIL.webp',                      alt: 'Until...',                                                        at: { x: 58.5, y: 20 }, clip: 1, voiceAt: 9.5, fallbackAt: 24.3,   // the last word of narration clip 2 (its voice is ~10.1-10.7s in the file, 9.6-10.2s after the clip starts)
+        replaces: [0, 1, 2, 3, 4] },   // every earlier box clears away as "Until" appears
+    ],
+    // Wings with the first voice; the wind runs under the story until the third clip ("until...") arrives and then fades;
+    // the stomach growl lands at the end of the first clip (the voice says "hungry" at ~11.9s)
+    sfx: [
+      { src: '/assets/audio/sfx/s2p1/Wings Flapping Soaring Sound Effect.mp3', on: 'enter', clip: 0 },
+      // the bird is silent for its first 2.5s, then sings until ~7s: under "Apung Batala, the majestic sky bird" (voice at 2.7-5.5s)
+      { src: '/assets/audio/sfx/s2p1/One Bird Singing Sound Effect.mp3', on: 'enter', clip: 0, volume: 0.8 },
+      { src: '/assets/audio/sfx/s2p1/WindFlying Sound Effects.mp3', on: 'enter', clip: 0, volume: 0.5, stopAtClip: 2 },
+      { src: '/assets/audio/sfx/s2p1/Stomach Growling Sound Effect.mp3', on: 'enter', clip: 0, at: 11.6 },
+    ],
   },
   {
     id: 'page-06',
