@@ -20,6 +20,7 @@ import { initRouter, registerScreen, navigate } from './utils/router.js';
 /* ── Audio ── */
 import { AudioManager }           from './audio/AudioManager.js';
 import { initUiSounds }           from './audio/ui-sounds.js';
+import { initAssetGuard }         from './utils/asset-guard.js';
 
 /* ── Screens ── */
 import { createSplashScreen,  mountSplash }   from './screens/loading/splash.js';
@@ -48,6 +49,7 @@ function bootstrap() {
 
   // 2. Initialise audio (loads persisted settings from localStorage)
   AudioManager.init();
+  initAssetGuard();   // failed pictures and videos are asked for again
   initUiSounds();   // hover and click sounds on every button
 
   const app = document.getElementById('app');

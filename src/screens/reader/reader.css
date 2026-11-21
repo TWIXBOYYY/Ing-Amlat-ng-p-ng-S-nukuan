@@ -433,3 +433,31 @@ span.reader-hud-btn-img img {
     padding: 0 clamp(10px, 2vw, 40px) clamp(6px, 1vmin, 16px);
   }
 }
+
+/* "LOADING..." while a page's video is still downloading */
+.reader-loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  margin: 0;
+  z-index: 5;
+  font-family: var(--font-tribal);
+  font-size: clamp(1.4rem, 4vmin, 3rem);
+  letter-spacing: 0.12em;
+  color: #e8c84a;
+  text-shadow: 0 2px 0 rgba(74, 42, 18, 0.9), 0 0 18px rgba(201, 162, 39, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.screen-reader.is-loading .reader-loading {
+  opacity: 1;
+  animation: reader-loading-pulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes reader-loading-pulse {
+  from { opacity: 0.45; }
+  to   { opacity: 1; }
+}

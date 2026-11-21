@@ -1,3 +1,5 @@
+import { guardBackground } from './asset-guard.js';
+
 /**
  * Layered parallax background. Each layer is a full-screen picture that shifts against the
  * cursor by its own depth: far layers barely move, near layers move a lot, which is what
@@ -27,6 +29,7 @@ export function addParallaxLayers(el, layers) {
            ` style="inset:-${pad}%;${l.shift ? `translate:0 ${-l.shift}%;` : ''}background-image:url('${l.src}')"></div>`;
   }).join('');
   el.prepend(wrap);
+  wrap.querySelectorAll('.px-layer').forEach((node, i) => guardBackground(node, layers[i].src));   // retry a layer that failed to load
 }
 
 /** Start the loop; returns a stop function. Safe to call again after stopping. */

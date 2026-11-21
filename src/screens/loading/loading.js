@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { addParallaxLayers, startParallax } from '../../utils/parallax-bg.js';
 import { playClickSound } from '../../audio/ui-sounds.js';
+import { preloadImage } from '../../utils/asset-guard.js';
 
 
 const DAY_BG   = '/assets/ui/MT.ALAYA_DAY.webp';
@@ -32,7 +33,7 @@ export function buildLoadingScreen({ bg, className, screen }) {
 export function createLoadingScreen() {
   const el = buildLoadingScreen({ bg: DAY_BG, className: '', screen: '#loading' });
   // The home screen's layers load while the loading screen plays
-  ['bg', 'clouds', 'ayala', 'ground'].forEach(n => { new Image().src = `/assets/ui/layer-${n}.webp`; });
+  ['bg', 'clouds', 'ayala', 'ground'].forEach(n => preloadImage(`/assets/ui/layer-${n}.webp`));
   return el;
 }
 

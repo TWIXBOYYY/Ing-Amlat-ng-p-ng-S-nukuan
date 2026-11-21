@@ -336,7 +336,8 @@ export const pages = [
     videoAspect: 1920 / 1080,   // natural 16:9 size; fills the screen on landscape, shown whole in portrait
     alt: 'Season 2, page 3 — motion graphic.',
     music:    '/assets/audio/music/theme-mystery.mp3',
-    ambience: null,
+    ambience: '/assets/audio/ambience/water-flow-loop.mp3',   // WATER FLOW, a 45s loop cut from the recording and raised to a usable level
+    ambienceVolume: 0.5,
     // The video plays alone for 6s, then the two clips follow back to back (11.8 + 9.4s); the page turns as the 30s video ends
     narrationDelay: 6,
     narration: [
@@ -345,21 +346,55 @@ export const pages = [
     ],
     advanceAfter: 3,
     videoSeconds: 30,
+    // The phoenix roar and the shining play at 0:12 of the page; the growl starts with the second voice clip
+    sfx: [
+      { src: '/assets/audio/sfx/s2p3/Phoenix Roars.mp3', on: 'enter', at: 12, volume: 0.6 },
+      { src: '/assets/audio/sfx/s2p3/Shining SFX.mp3', on: 'enter', at: 12 },
+      { src: '/assets/audio/sfx/s2p3/Stomach Growling Sound Effect.mp3', on: 'enter', clip: 1, volume: 0.8 },
+    ],
   },
   {
     id: 'page-08',
-    image: '/assets/comic/page-08.webp',
-    alt: 'Page 8 — art coming soon.',
+    video: '/assets/comic/s3p1/S3 P1 Motion.mp4',   // S3 page 1 (20s); muted like every page video
+    alt: 'Season 3, page 8 — motion graphic.',
+    music:    '/assets/audio/music/theme-mystery.mp3',
+    ambience: null,
+    // One 7.2s clip: the voice runs from ~1.1s to ~5.9s and the file is quiet for its last 1.3s. The page turns 1.5s after
+    // the clip ends (about 2.8s after the last word) and does not wait for the rest of the 20s video.
+    narration: [
+      { src: '/assets/narration/s3p1/S3-P1-NARRATOR-001.wav' },
+    ],
+    advanceAfter: 1.5,
   },
   {
     id: 'page-09',
-    image: '/assets/comic/page-09.webp',
-    alt: 'Page 9 — art coming soon.',
+    video: '/assets/comic/s3p2/S3 P2 Motion.mp4',   // S3 page 2 (30s)
+    alt: 'Season 3, page 9 — motion graphic.',
+    music:    '/assets/audio/music/theme-mystery.mp3',
+    ambience: null,
+    // Part 2.1 (two clips) then part 2.2, played whole back to back (6.8 + 10.2 + 8.9s); the video is 30s, so the page turns as it ends
+    narration: [
+      { src: '/assets/narration/s3p2/s3p2.1/S3-P2.1-NARRATOR-001 (NEW).wav' },
+      { src: '/assets/narration/s3p2/s3p2.1/S3-P2.1-NARRATOR-002.wav' },
+      { src: '/assets/narration/s3p2/s3p2.2/S3-P2.2-NARRATOR-001.wav' },
+    ],
+    advanceAfter: 3,
+    videoSeconds: 30,
+    // The distant explosion starts with part 2.2 (clip index 2); its boom is ~0.75s in, just before the voice (~1.2s)
+    sfx: [{ src: '/assets/audio/sfx/s3p2/Distant Explosion Sound Effect Realistic Boom for Films _ Games.mp3', on: 'enter', clip: 2 }],
   },
   {
     id: 'page-10',
-    image: '/assets/comic/page-10.webp',
-    alt: 'Page 10 — art coming soon.',
+    video: '/assets/comic/s3p3/S3_P3 Motion.mp4',   // S3 page 3 (25s, 4200x2548, 32 MB)
+    alt: 'Season 3, page 10 — motion graphic.',
+    music:    '/assets/audio/music/theme-mystery.mp3',
+    ambience: null,
+    // One clip, played whole; the video is 25s, so the page turns as it ends
+    narration: [
+      { src: '/assets/narration/s3p3/S3-P3-NARRATOR-001.wav' },
+    ],
+    advanceAfter: 3,
+    videoSeconds: 25,
   },
   {
     id: 'page-11',

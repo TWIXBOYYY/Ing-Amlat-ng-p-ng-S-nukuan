@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { navigate } from '../../utils/router.js';
 import { AudioManager } from '../../audio/AudioManager.js';
+import { preloadImage } from '../../utils/asset-guard.js';
 
 const PAGE_TURN_SFX = encodeURI('/assets/audio/sfx/ui/Turn a page.mp3');
 
@@ -143,7 +144,7 @@ function setDescription(target, text) {
 function preloadArt(char) {
   if (!char) return;
   [char.artLeft, char.artRight, char.artExtra].forEach((src) => {
-    if (src) new Image().src = src;
+    if (src) preloadImage(src);
   });
 }
 
@@ -201,13 +202,22 @@ export function mountCharacters(el) {
       opacity: 0, '--dx': `${-direction * slide}px`, duration: 0.14, ease: 'power1.in',
       onComplete: () => {
         applyCharacter(char);
-        // text and primary art together, secondary pieces ~60ms later
-        gsap.fromTo([textEl, bodyEl],
-          { opacity: 0, '--dx': `${direction * slide}px` },
-          { opacity: 1, '--dx': '0px', duration: 0.28, ease: 'power2.out' });
-        gsap.fromTo([faceEl, extraEl],
-          { opacity: 0, '--dx': `${direction * slide}px` },
-          { opacity: 1, '--dx': '0px', duration: 0.28, ease: 'power2.out', delay: reduceMotion ? 0 : 0.06 });
+        // Fade in once the new art has loaded (up to 1.5s), so a slow download never shows an empty frame
+        const arts = [bodyEl, faceEl, extraEl].map(s => s.querySelector('img')).filter(i => i && i.getAttribute('src'));
+        const ready = Promise.race([
+          Promise.all(arts.map(i => (i.decode ? i.decode().catch(() => {}) : Promise.resolve()))),
+          new Promise(r => setTimeout(r, 1500)),
+        ]);
+        ready.then(() => {
+          if (el._current !== index) return;   // moved on while waiting
+          // text and primary art together, secondary pieces ~60ms later
+          gsap.fromTo([textEl, bodyEl],
+            { opacity: 0, '--dx': `${direction * slide}px` },
+            { opacity: 1, '--dx': '0px', duration: 0.28, ease: 'power2.out' });
+          gsap.fromTo([faceEl, extraEl],
+            { opacity: 0, '--dx': `${direction * slide}px` },
+            { opacity: 1, '--dx': '0px', duration: 0.28, ease: 'power2.out', delay: reduceMotion ? 0 : 0.06 });
+        });
       },
     });
     updateButtons();

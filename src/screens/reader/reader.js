@@ -68,7 +68,7 @@ function buildPageEl(page, index) {
     ${placeholderPage(page, index)}
     <picture>
       <source srcset="${imgSrc}" type="image/webp">
-      <img class="reader-page-img" src="${jpgSrc}" alt="${page.alt || `Page ${index + 1}`}" loading="lazy">
+      <img class="reader-page-img" src="${jpgSrc}" alt="${page.alt || `Page ${index + 1}`}">
     </picture>
     ${(page.layers || []).map(l =>
       `<div class="reader-parallax-layer"
@@ -91,6 +91,7 @@ export function createReaderScreen() {
 
   el.innerHTML = `
     <div class="reader-stage" aria-live="polite" aria-atomic="true"></div>
+    <p class="reader-loading" role="status">LOADING...</p>
 
     <div class="reader-hud" aria-label="Reader controls">
       <!-- Top HUD -->
@@ -188,6 +189,7 @@ export function mountReader(el) {
     // Decode caption pictures now so they are ready to fade in without a hitch
     stage.querySelectorAll('.reader-page-caption').forEach(img => {
       const done = () => layoutCaptions(img.closest('.reader-page'));
+      img.addEventListener('load', () => { img._panel = null; done(); });   // also after a retry
       (img.decode ? img.decode() : Promise.resolve()).then(done, done);
     });
     // The picture is cropped differently on every screen shape: re-fit when it changes
@@ -315,6 +317,7 @@ function stopPageSfx() {
 function goTo(idx, direction, rootEl) {
   if (idx < 0 || idx >= pages.length || isTransitioning) return;
   stopPageSfx();
+  AudioManager.stopNarration();   // the voice stops as you turn, not when the next page has finished sliding in
   const refs = getRefs(rootEl);
   transitionTo(idx, direction, refs);
 }
@@ -547,13 +550,63 @@ function updateUI({ prevBtn, nextBtn, progFill }) {
 
 }
 
+let gateToken = 0;
+let loadingTimer = 0;
+
+/** Resolves when the video can play through (or after maxMs, or if it fails), so a slow download is waited for. */
+function whenVideoReady(v, maxMs = 10000) {
+  return new Promise((resolve) => {
+    if (v.readyState >= 3) { resolve(); return; }
+    v.preload = 'auto';
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      v.removeEventListener('canplay', finish);
+      v.removeEventListener('error', finish);
+      resolve();
+    };
+    v.addEventListener('canplay', finish);
+    v.addEventListener('error', finish);   // the retry (asset-guard) may still bring it in; do not wait forever
+    setTimeout(finish, maxMs);
+  });
+}
+
+/**
+ * A page's sound, voice and captions begin together with its picture. If the picture (video) has not
+ * downloaded enough to play, wait for it (showing LOADING...) instead of letting the voice run over a blank page.
+ */
 function triggerPageAudio(idx) {
   const page = pages[idx];
   if (!page) return;
-  const captionImgs = startCaptions(idx);
+  const token = ++gateToken;
+  clearTimeout(loadingTimer);
+  // The last page's voice, sounds and caption timers end now, even while this page is still loading
   stopPageSfx();
+  AudioManager.stopNarration();
   clearTimeout(advanceTimer);
+  resetCaptions();
   setHold(readerEl, false);   // each new page starts with autoplay on
+
+  const v = pageEls[idx]?.querySelector('video');
+  if (v && v.readyState < 3) {
+    // the label only shows if it takes a moment (a quick seek back to the first frame is not worth a flash)
+    loadingTimer = setTimeout(() => readerEl?.classList.add('is-loading'), 400);
+    whenVideoReady(v).then(() => {
+      clearTimeout(loadingTimer);
+      readerEl?.classList.remove('is-loading');
+      if (token === gateToken && idx === currentIndex) runPageAudio(idx);
+    });
+    return;
+  }
+  readerEl?.classList.remove('is-loading');
+  runPageAudio(idx);
+}
+
+function runPageAudio(idx) {
+  const page = pages[idx];
+  if (!page) return;
+  const captionImgs = startCaptions(idx);
 
   if (page.music)    AudioManager.playMusic(page.music);
   if (page.ambience) AudioManager.playAmbience(page.ambience, { gain: page.ambienceVolume ?? 1 });
